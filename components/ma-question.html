@@ -10,13 +10,28 @@
         width: 100%;
         position: relative;
       }
+      #question {
+        padding-top: 30px;
+        padding-bottom: 30px;
+        height: 80px;
+        color: white;
+        background-color: purple;
+        width: 100%;
+      }
+      #responses {
+        position: relative;
+        top: -50px;
+      }
+      ma-question-option:not(:last-child) {
+        margin-right: 15px;
+      }
     </style>
 
-    <div>
-      <div id="question">
+    <div layout vertical center>
+      <div id="question" layout horizontal center-justified>
         {{question}}
       </div>
-      <div id="responses">
+      <div id="responses" layout horizontal around-justified>
         <template repeat="{{option in options}}">
           <ma-question-option>
             {{option}}

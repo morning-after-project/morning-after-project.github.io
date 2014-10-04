@@ -11,14 +11,23 @@
         border: 10px solid white;
         text-transform: capitalize;
       }
+      paper-button.active {
+        background-color: white;
+      }
     </style>
-    <paper-button layout vertical center center-justified>
+    <paper-button layout vertical center center-justified
+      on-tap={{click}} class='{{selected ? "active" : ""}}'>
       <content></content>
     </paper-button>
   </template>
   <script>
     Polymer("ma-question-option", {
       ready: function() {
+        this.selected = false;
+      },
+      click: function() {
+        console.log("Selected");
+        this.selected = !this.selected;
       }
     });
   </script>
