@@ -1,0 +1,34 @@
+<link href='../bower_components/polymer/polymer.html' rel="import">
+<link href='../bower_components/paper-button/paper-button.html' rel="import">
+<link href='./ma-question-option.html' rel="import">
+
+<polymer-element name="ma-question" attributes="question options choice">
+  <template>
+    <style>
+      :host {
+        height: 100%;
+        width: 100%;
+        position: relative;
+      }
+    </style>
+
+    <div>
+      <div id="question">
+        {{question}}
+      </div>
+      <div id="responses">
+        <template repeat="{{option in options}}">
+          <ma-question-option>
+            {{option}}
+          </ma-question-option>
+        </template>
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer("ma-question", {
+      ready: function() {
+      }
+    });
+  </script>
+</polymer-element>

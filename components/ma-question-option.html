@@ -1,0 +1,25 @@
+<link href='../bower_components/polymer/polymer.html' rel="import">
+
+<polymer-element name="ma-question-option" attributes="selected">
+  <template>
+    <style>
+      paper-button {
+        height: 100px;
+        width: 100px;
+        background: red;
+        border-radius: 50px;
+        border: 10px solid white;
+        text-transform: capitalize;
+      }
+    </style>
+    <paper-button layout vertical center center-justified>
+      <content></content>
+    </paper-button>
+  </template>
+  <script>
+    Polymer("ma-question-option", {
+      ready: function() {
+      }
+    });
+  </script>
+</polymer-element>

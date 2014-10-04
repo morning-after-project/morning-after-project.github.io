@@ -2,9 +2,10 @@
 <link href='../bower_components/core-animated-pages/core-animated-pages.html' rel="import">
 <link href='../bower_components/core-animated-pages/transitions/slide-from-bottom.html' rel="import">
 <link href='../bower_components/paper-button/paper-button.html' rel="import">
+<link href='./ma-question.html' rel="import">
 
 
-<polymer-element name="ma-questions">
+<polymer-element name="ma-questions" attributes="started">
 
   <template>
     <style>
@@ -25,17 +26,28 @@
       }
     </style>
 
-    <core-animated-pages id="pages" transitions="slide-from-bottom" layout vertical center center-justified on-click="{{next}}">
+    <core-animated-pages id="pages" transitions="slide-from-bottom" layout vertical center center-justified>
       <section>
         <div layout vertical center>
-          Just had unsafe sex? We're here to help you decide what you need to do next to keep yourself healthy.
-          <paper-button id="begin">Begin</paper-button>
+          <div>
+            Just had unsafe sex?
+          </div>
+          <div>
+             We're here to help you decide what you need to do next to keep yourself healthy.
+          </div>
+          <div>
+            All information is confidential, and no data is uploaded online.
+          </div>
+          <paper-button id="begin" on-click={{next}}>Begin</paper-button>
         </div>
       </section>
       <section>
-        <div>
-          This is section two
-        </div>
+        <ma-question
+         question="What gender are you?"
+         options={{["Male","Female","Intersex"]}}
+         choice={{gender}}
+        >
+        </ma-question>
       </section>
       <section>
         <div>
@@ -48,11 +60,13 @@
   <script>
     Polymer("ma-questions", {
       ready: function() {
+        this.started = false;
       },
       next: function() {
-        console.log("Going to next");
+        if (!this.started) {
+          this.started = true;
+        }
         this.$.pages.selected += 1;
-        console.log(this.$.pages.selected);
       }
     });
   </script>

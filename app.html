@@ -14,6 +14,11 @@
       #header {
         background-color: red;
         height: 30%;
+        -webkit-transition: height 0.5s; 
+        -moz-transition: height 0.5s; 
+        -ms-transition: height 0.5s; 
+        -o-transition: height 0.5s; 
+        transition: height 0.5s;  
       }
       #header.tall {
         height: 50%;
@@ -27,10 +32,10 @@
     </style>
 
     <div id="main" layout vertical>
-      <div id="header" layout horizontal center center-justified class="tall">
+      <div id="header" layout horizontal center center-justified class='{{started ? "" : "tall"}}'>
         ihadunsafesex.com
       </div>
-      <ma-questions id="content" flex layout vertical>
+      <ma-questions id="content" flex layout vertical started={{started}}>
       </ma-questions>
       <div id="footer">
         <span>
@@ -43,6 +48,9 @@
   <script>
     Polymer("morning-after-app", {
       ready: function() {
+        this.$.content.addEventListener("started", function() {
+          console.log("Started now!");
+        });
       }
     });
   </script>
