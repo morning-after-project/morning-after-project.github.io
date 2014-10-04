@@ -1,0 +1,60 @@
+<link href='../bower_components/polymer/polymer.html' rel="import">
+<link href='../bower_components/core-animated-pages/core-animated-pages.html' rel="import">
+<link href='../bower_components/core-animated-pages/transitions/slide-from-bottom.html' rel="import">
+<link href='../bower_components/paper-button/paper-button.html' rel="import">
+
+
+<polymer-element name="ma-questions">
+
+  <template>
+    <style>
+      #begin {
+        width: 100px;
+        background: #134659;
+        color: white;
+      }
+      :host {
+        height: 100%;
+        width: 100%;
+        position: relative;
+      }
+      core-animated-pages {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+    </style>
+
+    <core-animated-pages id="pages" transitions="slide-from-bottom" layout vertical center center-justified on-click="{{next}}">
+      <section>
+        <div layout vertical center>
+          Just had unsafe sex? We're here to help you decide what you need to do next to keep yourself healthy.
+          <paper-button id="begin">Begin</paper-button>
+        </div>
+      </section>
+      <section>
+        <div>
+          This is section two
+        </div>
+      </section>
+      <section>
+        <div>
+          This is section three
+        </div>
+      </section>
+    </core-animated-pages>
+  </template>
+
+  <script>
+    Polymer("ma-questions", {
+      ready: function() {
+      },
+      next: function() {
+        console.log("Going to next");
+        this.$.pages.selected += 1;
+        console.log(this.$.pages.selected);
+      }
+    });
+  </script>
+</polymer>
+

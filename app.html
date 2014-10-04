@@ -1,0 +1,50 @@
+<link href='/bower_components/polymer/polymer.html' rel="import">
+<link href="/components/ma-questions.html" rel="import">
+
+<polymer-element name="morning-after-app">
+  <template>
+    <style>
+      :host {
+        height: 100%;
+        width: 100%;
+      }
+      #main {
+        height: 100%
+      }
+      #header {
+        background-color: red;
+        height: 30%;
+      }
+      #header.tall {
+        height: 50%;
+      }
+      #content {
+        background-color: blue;
+      }
+      #footer {
+        background-color: green;
+      }
+    </style>
+
+    <div id="main" layout vertical>
+      <div id="header" layout horizontal center center-justified class="tall">
+        ihadunsafesex.com
+      </div>
+      <ma-questions id="content" flex layout vertical>
+      </ma-questions>
+      <div id="footer">
+        <span>
+          Our Story
+        </span>
+      </div>
+    </div>
+    </core-header-panel>
+  </template>
+  <script>
+    Polymer("morning-after-app", {
+      ready: function() {
+      }
+    });
+  </script>
+</polymer-element>
+
