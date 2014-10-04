@@ -16,22 +16,20 @@
       }
     </style>
     <paper-button layout vertical center center-justified
-      on-tap={{toggle}} class='{{selected ? "active" : ""}}'>
+      on-tap={{toggle}} class='{{chosen ? "active" : ""}}'>
       <content></content>
     </paper-button>
   </template>
   <script>
     Polymer("ma-question-option", {
       ready: function() {
-        this.selected = false;
+        this.chosen = false;
         this.value = this.textContent.replace(/^\s+|\s+$/g, "");
-        console.log(this.value);
       },
       toggle: function() {
-        console.log("Selected");
-        this.selected = !this.selected;
-        this.fire("selected", {
-          selected: this.selected,
+        this.chosen = !this.chosen;
+        this.fire("chosen", {
+          chosen: this.chosen,
           value: this.value
         });
       }

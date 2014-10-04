@@ -33,41 +33,130 @@
             Just had unsafe sex?
           </div>
           <div>
-             We're here to help you decide what you need to do next to keep yourself healthy.
+             We're here to help you decide what you need to do next to keep yourthis healthy.
           </div>
           <div>
-            All information is confidential, and no data is uploaded online.
+            100% Confidential
           </div>
-          <paper-button id="begin" on-click={{next}}>Begin</paper-button>
+          <paper-button id="begin" on-click={{start}}>Begin</paper-button>
         </div>
       </section>
-      <section>
-        <ma-question
-         question="What gender are you?"
-         options={{["Male","Female","Intersex"]}}
-         choice={{gender}}
-         mode="single"
-        >
-        </ma-question>
-      </section>
-      <section>
-        <div>
-          This is section three
-        </div>
-      </section>
+      <template if={{started}}>
+        <section>
+          <ma-question
+           question="Have you recently had unprotected sex?"
+           options={{["Yes","No","Unsure"]}}
+           chosen={{unprotectedSex}}
+           mode="single"
+           required={{text}}
+           on-next={{next}}
+          >
+        </section>
+      </template>
+      <template if='{{unprotectedSex == "No"}}'>
+        <section>
+          <div layout vertical center>
+            <div>
+              Good job on using protection. Condoms are a highly effective tool to prevent STDs and pregnancy.
+            </div>
+            <paper-button id="begin" on-click={{startOver}}>Start Over</paper-button>
+          </div>
+        </section>
+      </template>
+      <template if='{{unprotectedSex == "Unsure" || unprotectedSex == "Yes"}}'>
+        <section>
+          <ma-question
+           question="What is your biological sex?"
+           options={{["Male","Female","Intersex"]}}
+           chosen={{selfSex}}
+           mode="single"
+           required=true
+           on-next={{handleSelfSex}}
+          >
+          </ma-question>
+        </section>
+        <section>
+          <ma-question
+            question="What is the biological sex of your partner(s)?"
+            options={{["Male","Female","Intersex"]}}
+            chosen={{partnersSex}}
+            mode="multiple"
+            required=true
+            on-next={{handlePartnerSex}}
+          >
+          </ma-question>
+        </section>
+        <section>
+          <ma-question
+            question="Which of these sexual acts did you engage in?"
+            options={{possibleSexualActs}}
+            chosen={{sexualActs}}
+            mode="multiple"
+            required=true
+            on-next={{next}}
+          >
+          </ma-question>
+        </section>
+      </template>
     </core-animated-pages>
   </template>
 
   <script>
+    var hasPenis = function(sexes) {
+      if (sexes instanceof Array) {
+        return sexes.indexOf("Male") > -1 || sexes.indexOf("Intersex") > -1;
+      } else {
+        return sexes == "Male" || sexes == "Intersex";
+      }
+    };
+    hasVagina = function(sexes) {
+      if (sexes instanceof Array) {
+        return sexes.indexOf("Female") > -1 || sexes.indexOf("Intersex") > -1;
+      } else {
+        return sexes == "Female" || sexes == "Intersex";
+      }
+    }
+    var self;
     Polymer("ma-questions", {
       ready: function() {
+        self = this;
         this.started = false;
+
+        // Always possible regardless of gender orientation
+        this.possibleSexualActs = ["Receiving Oral", "Giving Oral"];
       },
       next: function() {
-        if (!this.started) {
-          this.started = true;
-        }
         this.$.pages.selected += 1;
+      },
+      start: function() {
+        this.started = true;
+        setTimeout(function() {
+          self.next();
+        }, 0);
+      },
+      handleSelfSex: function() {
+        if (hasPenis(this.selfSex)) {
+          this.possibleSexualActs.push("Penetrative Partner (Anal)");
+        }
+        this.next();
+      },
+      handlePartnerSex: function() {
+        if (hasPenis(this.selfSex) && hasVagina(this.partnersSex)) {
+          this.possibleSexualActs.push("Penetrative Partner (Vaginal)");
+        }
+
+        if (hasPenis(this.partnersSex)) {
+          this.possibleSexualActs.push("Receiving Partner (Anal)");
+          if (hasVagina(this.selfSex)) {
+            this.possibleSexualActs.push("Receiving Partner (Vaginal)");
+          }
+        }
+
+        this.next();
+      },
+      startOver: function() {
+        this.started = false;
+        this.$.pages.selected = 0;
       }
     });
   </script>
