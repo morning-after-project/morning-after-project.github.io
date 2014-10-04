@@ -2,7 +2,7 @@
 <link href='../bower_components/paper-button/paper-button.html' rel="import">
 <link href='./ma-question-option.html' rel="import">
 
-<polymer-element name="ma-question" attributes="question options choice">
+<polymer-element name="ma-question" attributes="question options selected mode">
   <template>
     <style>
       :host {
@@ -33,7 +33,7 @@
       </div>
       <div id="responses" layout horizontal around-justified>
         <template repeat="{{option in options}}">
-          <ma-question-option>
+          <ma-question-option class="response">
             {{option}}
           </ma-question-option>
         </template>
@@ -43,6 +43,44 @@
   <script>
     Polymer("ma-question", {
       ready: function() {
+        var self = this;
+
+        // can be either 'single' or 'multiple'
+        this.mode = this.mode || "single";
+        this.selected = [];
+
+        this.responses = this.shadowRoot.getElementsByClassName("response");
+        var responseCallback = function(e) {
+          var payload = e.detail;
+          if (self.mode == "single") {
+            // empty the array
+            if (payload.selected == false) {
+              self.selected = [];
+            } else {
+              for (i = 0; i < self.responses.length; i++) {
+                var response = self.responses[i];
+                if (response.value != payload.value) {
+                  self.responses[i].selected = false;
+                }
+              }
+              self.selected = [payload.value];
+            }
+          } else {
+            if (payload.selected == false) {
+              var index = self.selected.indexOf(payload.value);
+              if (index != -1) {
+                self.selected.splice(index, 1);
+              }
+            } else {
+              self.selected.push(payload.value);
+            }
+          }
+          console.log(self.selected);
+        };
+        for (i = 0; i < this.responses.length; i++) {
+          var response = this.responses[i];
+          response.addEventListener("selected", responseCallback);
+        }
       }
     });
   </script>
