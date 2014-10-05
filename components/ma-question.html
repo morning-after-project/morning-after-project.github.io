@@ -39,11 +39,15 @@
           </div>
         </template>
       </div>
-      <div id="responses" layout horizontal around-justified>
-        <template repeat="{{option in options}}">
-          <ma-question-option class="response" on-chosen={{handleResponse}}>
-            {{option}}
-          </ma-question-option>
+      <div id="responses" layout vertical>
+        <template repeat="{{optionsRow in optionsRows}}">
+          <div layout horizontal center center-justified>
+            <template repeat="{{option in optionsRow}}">
+              <ma-question-option class="response" on-chosen={{handleResponse}}>
+                {{option}}
+              </ma-question-option>
+            </template>
+          </div>
         </template>
       </div>
       <paper-button disabled='{{completed ? false : true}}' on-click={{next}}>
@@ -61,6 +65,8 @@
         this.required = true;
         this.chosen = (this.mode == "single") ? null : [];
         this.completed = !this.required;
+
+        this.rebuildOptionsRows();
 
         this.responses = this.shadowRoot.getElementsByClassName("response");
       },
@@ -99,6 +105,20 @@
       },
       next: function() {
         this.fire("next");
+      },
+      rebuildOptionsRows: function() {
+        // split up the options into rows of 3
+        if (this.options) {
+          this.optionsRows = [];
+          if (this.options.length == 4) {
+            this.optionsRows.push(this.options.slice(0, 2));
+            this.optionsRows.push(this.options.slice(2, 4));
+          } else {
+            for (i = 0; i < this.options.length / 3; i++) {
+              this.optionsRows.push(this.options.slice(i * 3, i * 3 + 3 ));
+            }
+          }
+        }
       }
     });
   </script>

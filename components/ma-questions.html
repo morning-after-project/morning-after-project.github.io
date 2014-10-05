@@ -2,6 +2,8 @@
 <link href='../bower_components/core-animated-pages/core-animated-pages.html' rel="import">
 <link href='../bower_components/core-animated-pages/transitions/slide-from-bottom.html' rel="import">
 <link href='../bower_components/paper-button/paper-button.html' rel="import">
+<link href='../bower_components/paper-fab/paper-fab.html' rel="import">
+<link href='../bower_components/core-icons/core-icons.html' rel="import">
 <link href='./ma-question.html' rel="import">
 
 
@@ -26,6 +28,19 @@
       }
     </style>
 
+    <template id="condoms">
+      The best strategy for safer sex is to use a condom. They have been proven to be highly effective at
+      both preventing STIs including HIV, as well as unplanned pregnancies.
+    </template>
+
+    <template id="result">
+    </template>
+
+    <template id="result-detail">
+        <template ref="condoms"></template>
+      <paper-button on-click={{startOver}}>Start Over</paper-button>
+    </template>
+
     <core-animated-pages id="pages" transitions="slide-from-bottom" layout vertical center center-justified>
       <section>
         <div layout vertical center>
@@ -33,7 +48,7 @@
             Just had unsafe sex?
           </div>
           <div>
-             We're here to help you decide what you need to do next to keep yourthis healthy.
+             We're here to help you decide what you need to do next to keep yourself healthy.
           </div>
           <div>
             100% Confidential
@@ -59,7 +74,7 @@
             <div>
               Good job on using protection. Condoms are a highly effective tool to prevent STDs and pregnancy.
             </div>
-            <paper-button id="begin" on-click={{startOver}}>Start Over</paper-button>
+            <paper-button on-click={{startOver}}>Start Over</paper-button>
           </div>
         </section>
       </template>
@@ -88,18 +103,51 @@
         </section>
         <section>
           <ma-question
+            id="sexualActs"
             question="Which of these sexual acts did you engage in?"
             options={{possibleSexualActs}}
             chosen={{sexualActs}}
             mode="multiple"
-            required=true
-            on-next={{next}}
+            required={{false}}
+            on-next={{handleSexualActs}}
           >
           </ma-question>
         </section>
       </template>
+      <section>
+        <template if='{{sexualActs.length > 0}}'>
+          <div layout vertical center>
+            <h1>
+              You may be at risk of {{selfSex == "Female" ? "pregnancy and" : ""}} {{canHaveHIV ? "HIV" : "Gonorrhea"}} as well as other STIs.
+              Seeking treatment quickly can {{canBePregnant ? "prevent pregnancy" }},
+              allow rapid recovery{{canHaveHIV ? ", and prevent permanent HIV infection" : "."}}
+            </h1>
+            <div layout vertical horizontal>
+              <div>
+                Learn more about risks and treatment
+                <paper-fab icon="expand-more">
+                </paper-fab>
+              </div>
+              <div>
+                Find a health clinic near you
+                <paper-fab icon="link">
+                </paper-fab>
+              </div>
+            </div>
+          </div>
+        </template>
+        <template if='{{sexualActs.length == 0}}'>
+          <h1>
+            You are not at risk for STIs
+          </h1>
+          <template ref="condoms"></template>
+          <paper-button on-click={{startOver}}>Start Over</paper-button>
+        </template>
+      </section>
     </core-animated-pages>
   </template>
+
+
 
   <script>
     var hasPenis = function(sexes) {
@@ -121,9 +169,6 @@
       ready: function() {
         self = this;
         this.started = false;
-
-        // Always possible regardless of gender orientation
-        this.possibleSexualActs = ["Receiving Oral", "Giving Oral"];
       },
       next: function() {
         this.$.pages.selected += 1;
@@ -135,12 +180,16 @@
         }, 0);
       },
       handleSelfSex: function() {
-        if (hasPenis(this.selfSex)) {
-          this.possibleSexualActs.push("Penetrative Partner (Anal)");
-        }
         this.next();
       },
       handlePartnerSex: function() {
+        // Always possible regardless of gender orientation
+        this.possibleSexualActs = ["Receiving Oral", "Giving Oral"];
+
+        if (hasPenis(this.selfSex)) {
+          this.possibleSexualActs.push("Penetrative Partner (Anal)");
+        }
+
         if (hasPenis(this.selfSex) && hasVagina(this.partnersSex)) {
           this.possibleSexualActs.push("Penetrative Partner (Vaginal)");
         }
@@ -149,6 +198,35 @@
           this.possibleSexualActs.push("Receiving Partner (Anal)");
           if (hasVagina(this.selfSex)) {
             this.possibleSexualActs.push("Receiving Partner (Vaginal)");
+          }
+        }
+
+        // Sort the sexual acts so they always display in order in future
+        this.possibleSexualActs.sort();
+
+        var sexualActsQuestion = this.shadowRoot.querySelector("#sexualActs");
+        sexualActsQuestion.rebuildOptionsRows();
+
+        this.next();
+      },
+      handleSexualActs: function() {
+        this.canHaveHIV = false;
+        for (i = 0; i < this.sexualActs.length; i++) {
+          var sexualAct = this.sexualActs[i];
+          if (sexualAct.indexOf("Anal") > -1 || sexualAct.indexOf("Vaginal") > -1) {
+            this.canHaveHIV = true;
+            break;
+          }
+        }
+
+        this.canBePregnant = false;
+        if (this.selfSex != "Male") {
+          for (i = 0; i < this.sexualActs.length; i++) {
+            var sexualAct = this.sexualActs[i];
+            if (sexualAct.indexOf("Receiving Partner (Vaginal)") > -1) {
+              this.canBePregnant;
+              break;
+            }
           }
         }
 
