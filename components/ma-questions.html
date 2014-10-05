@@ -3,8 +3,11 @@
 <link href='../bower_components/core-animated-pages/transitions/slide-from-bottom.html' rel="import">
 <link href='../bower_components/paper-button/paper-button.html' rel="import">
 <link href='../bower_components/paper-fab/paper-fab.html' rel="import">
+<link href='../bower_components/paper-item/paper-item.html' rel="import">
 <link href='../bower_components/core-icons/core-icons.html' rel="import">
+<link href='../bower_components/core-collapse/core-collapse.html' rel="import">
 <link href='./ma-question.html' rel="import">
+<link href='./ma-condition-info.html' rel="import">
 
 
 <polymer-element name="ma-questions" attributes="started">
@@ -33,14 +36,6 @@
       both preventing STIs including HIV, as well as unplanned pregnancies.
     </template>
 
-    <template id="result">
-    </template>
-
-    <template id="result-detail">
-        <template ref="condoms"></template>
-      <paper-button on-click={{startOver}}>Start Over</paper-button>
-    </template>
-
     <core-animated-pages id="pages" transitions="slide-from-bottom" layout vertical center center-justified>
       <section>
         <div layout vertical center>
@@ -66,6 +61,7 @@
            required={{text}}
            on-next={{next}}
           >
+          </ma-question>
         </section>
       </template>
       <template if='{{unprotectedSex == "No"}}'>
@@ -116,32 +112,86 @@
       </template>
       <section>
         <template if='{{sexualActs.length > 0}}'>
-          <div layout vertical center>
-            <h1>
-              You may be at risk of {{selfSex == "Female" ? "pregnancy and" : ""}} {{canHaveHIV ? "HIV" : "Gonorrhea"}} as well as other STIs.
-              Seeking treatment quickly can {{canBePregnant ? "prevent pregnancy" }},
-              allow rapid recovery{{canHaveHIV ? ", and prevent permanent HIV infection" : "."}}
-            </h1>
-            <div layout vertical horizontal>
-              <div>
-                Learn more about risks and treatment
-                <paper-fab icon="expand-more">
-                </paper-fab>
+          <core-animated-pages id="resultSlides" transitions="slide-from-bottom" layout vertical center center-justified>
+            <section>
+              <div layout vertical center>
+                <h1>
+                  You may be at risk of {{selfSex == "Female" ? "pregnancy and" : ""}} {{canHaveHIV ? "HIV" : "Gonorrhea"}} as well as other STIs.
+                  Seeking treatment quickly can {{canBePregnant ? "prevent pregnancy," : "" }}
+                  allow rapid recovery{{canHaveHIV ? ", and prevent permanent HIV infection" : "."}}
+                </h1>
+                <div layout horizontal>
+                  <div layout vertical center>
+                    <p>
+                      Learn more about risks and treatment
+                    </p>
+                    <paper-fab icon="expand-more" on-click={{handleMoreResult}}></paper-fab>
+                  </div>
+                  <div layout vertical center>
+                    <p>
+                      Find a health clinic near you (US Only)
+                    </p>
+                    <a href="http://locator.aids.gov/" target="_blank">
+                      <paper-fab icon="link"></paper-fab>
+                    </a>
+                  </div>
+                </div>
               </div>
-              <div>
-                Find a health clinic near you
-                <paper-fab icon="link">
-                </paper-fab>
+            </section>
+            <section>
+              <div layout vertical>
+                <a layout horizontal center target="_blank" href="http://locator.aids.gov/">
+                  Find a health clinic near you (US Only)
+                  <paper-fab icon="link"></paper-fab>
+                </a>
+                <div flex layout vertical>
+                  <h2>
+                    You may be at risk of the following:
+                  </h2>
+                  <div>
+                    <template if={{canBePregnant}}>
+                      <paper-item on-click={{toglePregnant}}>
+                        Pregnancy
+                      </paper-item>
+                      <core-collapse id="pregnancyInfo">
+                        <p>
+                          You can get pregnant each time you receive vaginal sex, even if you use condoms or other forms of birth control, and regardless of what part of your menstrual cycle you are on.
+                        </p>
+                        <p>
+                          Within X hours, you can take an emergency contraceptive pill, also known as plan B or the morning after pill.
+                        </p>
+                      </core-collapse>
+                    </template>
+                    <template if={{canHaveHIV}}>
+                      <paper-item on-click={{toggleHIV}}>
+                        HIV
+                      </paper-item>
+                      <core-collapse id="hivInfo">
+                        <ma-condition-info
+                          detail="HIV is xxxx"
+                          transmission="Info on transmission here"
+                          treatment="You can get PEP" 
+                        >
+                        </ma-condition-info>
+                      </core-collapse>
+                      
+                    </template>
+                  </div>
+                </div>
+                <template ref="condoms"></template>
+                <paper-button on-click={{startOver}}>Start Over</paper-button>
               </div>
-            </div>
-          </div>
+            </section>
+          </core-animated-pages>
         </template>
         <template if='{{sexualActs.length == 0}}'>
-          <h1>
-            You are not at risk for STIs
-          </h1>
-          <template ref="condoms"></template>
-          <paper-button on-click={{startOver}}>Start Over</paper-button>
+          <div id="result">
+            <h1>
+              You are not at risk for STIs
+            </h1>
+            <template ref="condoms"></template>
+            <paper-button on-click={{startOver}}>Start Over</paper-button>
+          </div>
         </template>
       </section>
     </core-animated-pages>
@@ -164,6 +214,8 @@
         return sexes == "Female" || sexes == "Intersex";
       }
     }
+    var toggles = {};
+
     var self;
     Polymer("ma-questions", {
       ready: function() {
@@ -220,13 +272,11 @@
         }
 
         this.canBePregnant = false;
-        if (this.selfSex != "Male") {
-          for (i = 0; i < this.sexualActs.length; i++) {
-            var sexualAct = this.sexualActs[i];
-            if (sexualAct.indexOf("Receiving Partner (Vaginal)") > -1) {
-              this.canBePregnant;
-              break;
-            }
+        for (i = 0; i < this.sexualActs.length; i++) {
+          var sexualAct = this.sexualActs[i];
+          if (sexualAct.indexOf("Receiving Partner (Vaginal)") > -1) {
+            this.canBePregnant = true;
+            break;
           }
         }
 
@@ -235,8 +285,31 @@
       startOver: function() {
         this.started = false;
         this.$.pages.selected = 0;
+      },
+      handleMoreResult: function() {
+        var resultSlides = this.shadowRoot.querySelector("#resultSlides");
+        resultSlides.selected += 1;
+
+        var conditions = ["pregnancy", "hiv", "gonorrhea"];
+        for (i = 0; i < conditions.length; i++) {
+          var condition = conditions[i];
+          var expandNode = this.shadowRoot.querySelector("#" + condition + "Info");
+          (function(expandNode) {
+            console.log(expandNode);
+            toggles[condition.toLowerCase()] = function() {
+              expandNode.toggle();
+              console.log(expandNode);
+              console.log(expandNode.toggle);
+            };
+            console.log(toggles);
+          })(expandNode);
+        }
+      },
+      toggleHIV: function() {
+        toggles["hiv"]();
+        console.log(toggles["hiv"]);
       }
     });
   </script>
-</polymer>
+</polymer-element>
 

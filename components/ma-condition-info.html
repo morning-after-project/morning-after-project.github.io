@@ -1,0 +1,29 @@
+<link href='../bower_components/polymer/polymer.html' rel="import">
+
+<polymer-element name="ma-condition-info" attributes="detail transmission treatment">
+  <template>
+    <style>
+      .label {
+        font-weight: 700;
+      }
+    </style>
+
+    <div layout vertical>
+      <div>
+        {{detail}}
+      </div>
+      <div>
+        <span class="label">Transmission</span>
+        {{transmission}}
+      </div>
+      <div>
+        <span class="treatment">Treatment</span>
+        {{treatment}}
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer("ma-condition-info", {
+    });
+  </script>
+</polymer-element>
