@@ -1,6 +1,8 @@
 <link href='../bower_components/polymer/polymer.html' rel="import">
+<link href='../bower_components/paper-item/paper-item.html' rel="import">
+<link href='../bower_components/core-collapse/core-collapse.html' rel="import">
 
-<polymer-element name="ma-condition-info" attributes="detail transmission treatment">
+<polymer-element name="ma-condition-info" attributes="conditionName detail transmission treatment">
   <template>
     <style>
       .label {
@@ -8,22 +10,38 @@
       }
     </style>
 
-    <div layout vertical>
-      <div>
-        {{detail}}
+    <paper-item on-click={{toggle}}>
+      {{conditionName}}
+    </paper-item>
+    <core-collapse id="info">
+      <div layout vertical>
+        <template if={{detail}}>
+          <div>
+            {{detail}}
+          </div>
+        </template>
+        <template if={{transmission}}>
+          <div>
+            <div class="label">Transmission</div>
+            {{transmission}}
+        </div>
+        </template>
+        <template if={{treatment}}>
+          <div>
+            <div class="label">Treatment</div>
+            {{treatment}}
+          </div>
+        </template>
+        <content></content>
       </div>
-      <div>
-        <span class="label">Transmission</span>
-        {{transmission}}
-      </div>
-      <div>
-        <span class="treatment">Treatment</span>
-        {{treatment}}
-      </div>
-    </div>
+    </core-collapse>
   </template>
   <script>
     Polymer("ma-condition-info", {
+      toggle: function() {
+        var infoNode = this.shadowRoot.querySelector("#info");
+        infoNode.toggle();
+      }
     });
   </script>
 </polymer-element>
