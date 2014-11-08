@@ -43,8 +43,7 @@
         <template repeat="{{optionsRow in optionsRows}}">
           <div layout horizontal center center-justified>
             <template repeat="{{option in optionsRow}}">
-              <ma-question-option class="response" on-chosen={{handleResponse}}>
-                {{option}}
+              <ma-question-option class="response" on-chosen={{handleResponse}} option={{option}}>
               </ma-question-option>
             </template>
           </div>

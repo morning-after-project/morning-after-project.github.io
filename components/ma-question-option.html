@@ -1,6 +1,6 @@
 <link href='../bower_components/polymer/polymer.html' rel="import">
 
-<polymer-element name="ma-question-option" >
+<polymer-element name="ma-question-option" attributes="option">
   <template>
     <style>
       paper-button {
@@ -16,15 +16,15 @@
       }
     </style>
     <paper-button layout vertical center center-justified
-      on-tap={{toggle}} class='{{chosen ? "active" : ""}}'>
-      <content></content>
+      on-click={{toggle}} class='{{chosen ? "active" : ""}}'>
+      {{value}}
     </paper-button>
   </template>
   <script>
     Polymer("ma-question-option", {
       ready: function() {
         this.chosen = false;
-        this.value = this.textContent.replace(/^\s+|\s+$/g, "");
+        this.value = this.option.replace(/^\s+|\s+$/g, "");
       },
       toggle: function() {
         this.chosen = !this.chosen;
