@@ -314,7 +314,7 @@
           </section>
         </template>
       </core-animated-pages>
-      <paper-button id="footer" class="mb-font" layout horizontal center center-justified on-click={{openOurStory}}>
+      <paper-button id="footer" class="mb-font" layout horizontal center center-justified on-click={{toggleOurStory}}>
         Our Story
       </paper-button>
       <paper-dialog id="ourStory" heading="Our Story" transition="paper-dialog-transition-bottom"
@@ -381,7 +381,7 @@
             USE AT YOUR OWN RISK: This web site is for informational purposes only. The authors are not medical professionals.  You assume total responsibility and risk for your use of this service. PLEASE BE AWARE THAT ANY INFORMATION YOU MAY FIND IN this website MAY BE INACCURATE. Always consult a physician for medical advice.
           </p>
 
-          <paper-button on-click={{toggleOutStory}}>Close</paper-button>
+          <paper-button on-click={{toggleOurStory}}>Close</paper-button>
         </div>
       </paper-dialog>
     </div>
@@ -502,7 +502,7 @@
         this.started = false;
         this.resetState();
       },
-      openOurStory: function() {
+      toggleOurStory: function() {
         this.$.ourStory.toggle();
       }
     });

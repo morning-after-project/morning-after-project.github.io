@@ -620,6 +620,116 @@ html /deep/ core-icon {
 
 
 
+<!--
+The `core-overlay` element displays overlayed on top of other content. It starts
+out hidden and is displayed by setting its `opened` property to true.
+A `core-overlay's` opened state can be toggled by calling the `toggle`
+method.
+
+The `core-overlay` will, by default, show/hide itself when it's opened. The 
+`target` property may be set to another element to cause that element to 
+be shown when the overlay is opened.
+
+It's common to want a `core-overlay` to animate to its opened
+position. The `core-overlay` element uses a `core-transition` to handle
+animation. The default transition is `core-transition-fade` which 
+causes the overlay to fade in when displayed. See 
+<a href="../core-transition/">`core-transition`</a> for more
+information about customizing a `core-overlay's` opening animation. The
+`backdrop` property can be set to true to show a backdrop behind the overlay
+that will darken the rest of the window.
+
+An element that should close the `core-overlay` will automatically
+do so if it's given the `core-overlay-toggle` attribute. This attribute
+can be customized with the `closeAttribute` property. You can also use
+`closeSelector` if more general matching is needed.
+
+By default  `core-overlay` will close whenever the user taps outside it or
+presses the escape key. This behavior can be turned off via the
+`autoCloseDisabled` property.
+
+    <core-overlay>
+      <h2>Dialog</h2>
+      <input placeholder="say something..." autofocus>
+      <div>I agree with this wholeheartedly.</div>
+      <button core-overlay-toggle>OK</button>
+    </core-overlay>
+
+`core-overlay` will automatically size and position itself according to the 
+following rules. The overlay's size is constrained such that it does not
+overflow the screen. This is done by setting maxHeight/maxWidth on the 
+`sizingTarget`. If the `sizingTarget` already has a setting for one of these
+properties, it will not be overridden. The overlay should
+be positioned via css or imperatively using the `core-overlay-position` event.
+If the overlay is not positioned vertically via setting `top` or `bottom`, it
+will be centered vertically. The same is true horizontally via a setting to 
+`left` or `right`. In addition, css `margin` can be used to provide some space
+around the overlay. This can be used to ensure
+that, for example, a drop shadow is always visible around the overlay.
+
+@group Core Elements
+@element core-overlay
+@homepage github.io
+-->
+<!--
+Fired when the `core-overlay`'s `opened` property changes.
+
+@event core-overlay-open
+@param {Object} detail
+@param {Object} detail.opened the opened state
+-->
+<!--
+Fired when the `core-overlay` has completely opened.
+
+@event core-overlay-open-completed
+-->
+<!--
+Fired when the `core-overlay` has completely closed.
+
+@event core-overlay-close-completed
+-->
+<!--
+Fired when the `core-overlay` needs to position itself. Optionally, implement
+in order to position an overlay via code. If the overlay was not otherwise
+positioned, it's important to indicate how the overlay has been positioned by
+setting the `dimensions.position` object. For example, if the overlay has been
+positioned via setting `right` and `top`, set dimensions.position to an
+object like this: `{v: 'top', h: 'right'}`.
+
+@event core-overlay-position
+@param {Object} detail
+@param {Object} detail.target the overlay target
+@param {Object} detail.sizingTarget the overlay sizing target
+@param {Object} detail.opened the opened state
+-->
+<style>
+  .core-overlay-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .core-overlay-backdrop.core-opened {
+    opacity: 0.6;
+  }
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3736,106 +3846,6 @@ polyfill-next-selector { content: ':host > *:not(.core-selected):not([animate])'
   </script>
 </polymer-element>
 
-<polymer-element name="paper-fab" extends="paper-button-base" attributes="src icon mini" role="button" assetpath="bower_components/paper-fab/">
-
-  <template>
-
-    <style>
-      :host {
-        display: inline-block;
-        position: relative;
-        outline: none;
-        -webkit-user-select: none;
-        user-select: none;
-        cursor: pointer;
-        z-index: 0;
-
-        box-sizing: border-box;
-        width: 56px;
-        height: 56px;
-        background: #d23f31;
-        color: #fff;
-        border-radius: 50%;
-        padding: 16px;
-      }
-
-      :host([mini]) {
-        width: 40px;
-        height: 40px;
-        padding: 8px;
-      }
-
-      :host([disabled]) {
-        color: #c9c9c9;
-        pointer-events: none;
-        cursor: auto;
-      }
-
-      #ripple {
-        pointer-events: none;
-        z-index: -1;
-      }
-    </style>
-
-    <template if="{{raised}}">
-      <paper-shadow id="shadow" z="{{z}}" animated=""></paper-shadow>
-    </template>
-
-    <!-- to position to ripple behind the icon -->
-    <core-icon relative="" id="icon" src="{{src}}" icon="{{icon}}"></core-icon>
-
-  </template>
-
-  <script>
-    Polymer('paper-fab',{
-
-      publish: {
-
-        /**
-         * The URL of an image for the icon. If the src property is specified,
-         * the icon property should not be.
-         *
-         * @attribute src
-         * @type string
-         * @default ''
-         */
-        src: '',
-
-        /**
-         * Specifies the icon name or index in the set of icons available in
-         * the icon's icon set. If the icon property is specified,
-         * the src property should not be.
-         *
-         * @attribute icon
-         * @type string
-         * @default ''
-         */
-        icon: '',
-
-        /**
-         * Set this to true to style this is a "mini" FAB.
-         *
-         * @attribute mini
-         * @type boolean
-         * @default false
-         */
-        mini: false,
-
-        raised: true,
-        recenteringTouch: false,
-        fill: true
-
-      },
-
-      iconChanged: function(oldIcon) {
-        this.setAttribute('aria-label', this.icon);
-      }
-
-    });
-
-  </script>
-</polymer-element>
-
 <polymer-element name="core-iconset-svg" extends="core-meta" attributes="iconSize" assetpath="bower_components/core-iconset-svg/">
 
   <script>
@@ -4221,6 +4231,1169 @@ polyfill-next-selector { content: ':host > *:not(.core-selected):not([animate])'
 </defs></svg>
 </core-iconset-svg>
 
+<polymer-element name="core-key-helper" assetpath="bower_components/core-overlay/">
+  <script>
+    Polymer('core-key-helper', {
+      ENTER_KEY: 13,
+      ESCAPE_KEY: 27
+    });
+  </script>
+</polymer-element>
+
+<polymer-element name="core-overlay-layer" assetpath="bower_components/core-overlay/">
+<template>
+  <style>
+    :host {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      display: none;
+    }
+
+    :host(.core-opened) {
+      display: block;
+    }
+  </style>
+  <content></content>
+</template>
+<script>
+(function() {
+
+  Polymer('core-overlay-layer', {
+    publish: {
+      opened: false
+    },
+    openedChanged: function() {
+      this.classList.toggle('core-opened', this.opened);
+    },
+    /**
+     * Adds an element to the overlay layer
+     */
+    addElement: function(element) {
+      if (!this.parentNode) {
+        document.querySelector('body').appendChild(this);
+      }
+      if (element.parentNode !== this) {
+        element.__contents = [];
+        var ip$ = element.querySelectorAll('content');
+        for (var i=0, l=ip$.length, n; (i<l) && (n = ip$[i]); i++) {
+          this.moveInsertedElements(n);
+          this.cacheDomLocation(n);
+          n.parentNode.removeChild(n);
+          element.__contents.push(n);
+        }
+        this.cacheDomLocation(element);
+        this.updateEventController(element);
+        var h = this.makeHost();
+        h.shadowRoot.appendChild(element);
+        element.__host = h;
+      }
+    },
+    makeHost: function() {
+      var h = document.createElement('overlay-host');
+      h.createShadowRoot();
+      this.appendChild(h);
+      return h;
+    },
+    moveInsertedElements: function(insertionPoint) {
+      var n$ = insertionPoint.getDistributedNodes();
+      var parent = insertionPoint.parentNode;
+      insertionPoint.__contents = [];
+      for (var i=0, l=n$.length, n; (i<l) && (n=n$[i]); i++) {
+        this.cacheDomLocation(n);
+        this.updateEventController(n);
+        insertionPoint.__contents.push(n);
+        parent.appendChild(n);  
+      }
+    },
+    updateEventController: function(element) {
+      element.eventController = this.element.findController(element);
+    },
+    /**
+     * Removes an element from the overlay layer
+     */
+    removeElement: function(element) {
+      element.eventController = null;
+      this.replaceElement(element);
+      var h = element.__host;
+      if (h) {
+        h.parentNode.removeChild(h);
+      }
+    },
+    replaceElement: function(element) {
+      if (element.__contents) {
+        for (var i=0, c$=element.__contents, c; (c=c$[i]); i++) {
+          this.replaceElement(c);
+        }
+        element.__contents = null;
+      }
+      if (element.__parentNode) {
+        var n = element.__nextElementSibling && element.__nextElementSibling 
+            === element.__parentNode ? element.__nextElementSibling : null;
+        element.__parentNode.insertBefore(element, n);
+      }
+    },
+    cacheDomLocation: function(element) {
+      element.__nextElementSibling = element.nextElementSibling;
+      element.__parentNode = element.parentNode;
+    }
+  });
+  
+})();
+</script>
+</polymer-element>
+<polymer-element name="core-overlay" assetpath="bower_components/core-overlay/">
+<script>
+(function() {
+
+  Polymer('core-overlay', {
+
+    publish: {
+      /**
+       * The target element that will be shown when the overlay is 
+       * opened. If unspecified, the core-overlay itself is the target.
+       *
+       * @attribute target
+       * @type Object
+       * @default the overlay element
+       */
+      target: null,
+
+
+      /**
+       * A `core-overlay`'s size is guaranteed to be 
+       * constrained to the window size. To achieve this, the sizingElement
+       * is sized with a max-height/width. By default this element is the 
+       * target element, but it can be specifically set to a specific element
+       * inside the target if that is more appropriate. This is useful, for 
+       * example, when a region inside the overlay should scroll if needed.
+       *
+       * @attribute sizingTarget
+       * @type Object
+       * @default the target element
+       */
+      sizingTarget: null,
+    
+      /**
+       * Set opened to true to show an overlay and to false to hide it.
+       * A `core-overlay` may be made initially opened by setting its
+       * `opened` attribute.
+       * @attribute opened
+       * @type boolean
+       * @default false
+       */
+      opened: false,
+
+      /**
+       * If true, the overlay has a backdrop darkening the rest of the screen.
+       * The backdrop element is attached to the document body and may be styled
+       * with the class `core-overlay-backdrop`. When opened the `core-opened`
+       * class is applied.
+       *
+       * @attribute backdrop
+       * @type boolean
+       * @default false
+       */    
+      backdrop: false,
+
+      /**
+       * If true, the overlay is guaranteed to display above page content.
+       *
+       * @attribute layered
+       * @type boolean
+       * @default false
+      */
+      layered: false,
+    
+      /**
+       * By default an overlay will close automatically if the user
+       * taps outside it or presses the escape key. Disable this
+       * behavior by setting the `autoCloseDisabled` property to true.
+       * @attribute autoCloseDisabled
+       * @type boolean
+       * @default false
+       */
+      autoCloseDisabled: false,
+
+      /**
+       * By default an overlay will focus its target or an element inside
+       * it with the `autoFocus` attribute. Disable this
+       * behavior by setting the `autoFocusDisabled` property to true.
+       * @attribute autoFocusDisabled
+       * @type boolean
+       * @default false
+       */
+      autoFocusDisabled: false,
+
+      /**
+       * This property specifies an attribute on elements that should
+       * close the overlay on tap. Should not set `closeSelector` if this
+       * is set.
+       *
+       * @attribute closeAttribute
+       * @type string
+       * @default "core-overlay-toggle"
+       */
+      closeAttribute: 'core-overlay-toggle',
+
+      /**
+       * This property specifies a selector matching elements that should
+       * close the overlay on tap. Should not set `closeAttribute` if this
+       * is set.
+       *
+       * @attribute closeSelector
+       * @type string
+       * @default ""
+       */
+      closeSelector: '',
+
+      /**
+       * The transition property specifies a string which identifies a 
+       * <a href="../core-transition/">`core-transition`</a> element that 
+       * will be used to help the overlay open and close. The default
+       * `core-transition-fade` will cause the overlay to fade in and out.
+       *
+       * @attribute transition
+       * @type string
+       * @default 'core-transition-fade'
+       */
+      transition: 'core-transition-fade'
+
+    },
+
+    captureEventName: 'tap',
+    targetListeners: {
+      'tap': 'tapHandler',
+      'keydown': 'keydownHandler',
+      'core-transitionend': 'transitionend'
+    },
+    
+    registerCallback: function(element) {
+      this.layer = document.createElement('core-overlay-layer');
+      this.keyHelper = document.createElement('core-key-helper');
+      this.meta = document.createElement('core-transition');
+      this.scrim = document.createElement('div');
+      this.scrim.className = 'core-overlay-backdrop';
+    },
+
+    ready: function() {
+      this.target = this.target || this;
+      // flush to ensure styles are installed before paint
+      Platform.flush();
+    },
+
+    /** 
+     * Toggle the opened state of the overlay.
+     * @method toggle
+     */
+    toggle: function() {
+      this.opened = !this.opened;
+    },
+
+    /** 
+     * Open the overlay. This is equivalent to setting the `opened`
+     * property to true.
+     * @method open
+     */
+    open: function() {
+      this.opened = true;
+    },
+
+    /** 
+     * Close the overlay. This is equivalent to setting the `opened` 
+     * property to false.
+     * @method close
+     */
+    close: function() {
+      this.opened = false;
+    },
+
+    domReady: function() {
+      this.ensureTargetSetup();
+    },
+
+    targetChanged: function(old) {
+      if (this.target) {
+        // really make sure tabIndex is set
+        if (this.target.tabIndex < 0) {
+          this.target.tabIndex = -1;
+        }
+        this.addElementListenerList(this.target, this.targetListeners);
+        this.target.style.display = 'none';
+        this.target.__overlaySetup = false;
+      }
+      if (old) {
+        this.removeElementListenerList(old, this.targetListeners);
+        var transition = this.getTransition();
+        if (transition) {
+          transition.teardown(old);
+        } else {
+          old.style.position = '';
+          old.style.outline = '';
+        }
+        old.style.display = '';
+      }
+    },
+
+    transitionChanged: function(old) {
+      if (!this.target) {
+        return;
+      }
+      if (old) {
+        this.getTransition(old).teardown(this.target);
+      }
+      this.target.__overlaySetup = false;
+    },
+
+    // NOTE: wait to call this until we're as sure as possible that target
+    // is styled.
+    ensureTargetSetup: function() {
+      if (!this.target || this.target.__overlaySetup) {
+        return;
+      }
+      if (!this.sizingTarget) {
+        this.sizingTarget = this.target;
+      }
+      this.target.__overlaySetup = true;
+      this.target.style.display = '';
+      var transition = this.getTransition();
+      if (transition) {
+        transition.setup(this.target);
+      }
+      var style = this.target.style;
+      var computed = getComputedStyle(this.target);
+      if (computed.position === 'static') {
+        style.position = 'fixed';
+      }
+      style.outline = 'none';
+      style.display = 'none';
+    },
+
+    openedChanged: function() {
+      this.transitioning = true;
+      this.ensureTargetSetup();
+      this.prepareRenderOpened();
+      // async here to allow overlay layer to become visible.
+      this.async(function() {
+        this.target.style.display = '';
+        // force layout to ensure transitions will go
+        this.target.offsetWidth;
+        this.renderOpened();
+      });
+      this.fire('core-overlay-open', this.opened);
+    },
+
+    // tasks which must occur before opening; e.g. making the element visible
+    prepareRenderOpened: function() {
+      if (this.opened) {
+        addOverlay(this);
+      }
+      this.prepareBackdrop();
+      // async so we don't auto-close immediately via a click.
+      this.async(function() {
+        if (!this.autoCloseDisabled) {
+          this.enableElementListener(this.opened, document,
+              this.captureEventName, 'captureHandler', true);
+        }
+      });
+      this.enableElementListener(this.opened, window, 'resize',
+          'resizeHandler');
+
+      if (this.opened) {
+        // force layout so SD Polyfill renders
+        this.target.offsetHeight;
+        this.discoverDimensions();
+        // if we are showing, then take care when positioning
+        this.preparePositioning();
+        this.positionTarget();
+        this.updateTargetDimensions();
+        this.finishPositioning();
+        if (this.layered) {
+          this.layer.addElement(this.target);
+          this.layer.opened = this.opened;
+        }
+      }
+    },
+
+    // tasks which cause the overlay to actually open; typically play an
+    // animation
+    renderOpened: function() {
+      var transition = this.getTransition();
+      if (transition) {
+        transition.go(this.target, {opened: this.opened});
+      } else {
+        this.transitionend();
+      }
+      this.renderBackdropOpened();
+    },
+
+    // finishing tasks; typically called via a transition
+    transitionend: function(e) {
+      // make sure this is our transition event.
+      if (e && e.target !== this.target) {
+        return;
+      }
+      this.transitioning = false;
+      if (!this.opened) {
+        this.resetTargetDimensions();
+        this.target.style.display = 'none';
+        this.completeBackdrop();
+        removeOverlay(this);
+        if (this.layered) {
+          if (!currentOverlay()) {
+            this.layer.opened = this.opened;
+          }
+          this.layer.removeElement(this.target);
+        }
+      }
+      this.fire('core-overlay-' + (this.opened ? 'open' : 'close') + 
+          '-completed');
+      this.applyFocus();
+    },
+
+    prepareBackdrop: function() {
+      if (this.backdrop && this.opened) {
+        if (!this.scrim.parentNode) {
+          document.body.appendChild(this.scrim);
+          this.scrim.style.zIndex = currentOverlayZ() - 1;
+        }
+        trackBackdrop(this);
+      }
+    },
+
+    renderBackdropOpened: function() {
+      if (this.backdrop && getBackdrops().length < 2) {
+        this.scrim.classList.toggle('core-opened', this.opened);
+      }
+    },
+
+    completeBackdrop: function() {
+      if (this.backdrop) {
+        trackBackdrop(this);
+        if (getBackdrops().length === 0) {
+          this.scrim.parentNode.removeChild(this.scrim);
+        }
+      }
+    },
+
+    preparePositioning: function() {
+      this.target.style.transition = this.target.style.webkitTransition = 'none';
+      this.target.style.transform = this.target.style.webkitTransform = 'none';
+      this.target.style.display = '';
+    },
+
+    discoverDimensions: function() {
+      if (this.dimensions) {
+        return;
+      }
+      var target = getComputedStyle(this.target);
+      var sizer = getComputedStyle(this.sizingTarget);
+      this.dimensions = {
+        position: {
+          v: target.top !== 'auto' ? 'top' : (target.bottom !== 'auto' ?
+            'bottom' : null),
+          h: target.left !== 'auto' ? 'left' : (target.right !== 'auto' ?
+            'right' : null),
+          css: target.position
+        },
+        size: {
+          v: sizer.maxHeight !== 'none',
+          h: sizer.maxWidth !== 'none'
+        },
+        margin: {
+          top: parseInt(target.marginTop) || 0,
+          right: parseInt(target.marginRight) || 0,
+          bottom: parseInt(target.marginBottom) || 0,
+          left: parseInt(target.marginLeft) || 0
+        }
+      };
+    },
+
+    finishPositioning: function(target) {
+      this.target.style.display = 'none';
+      this.target.style.transform = this.target.style.webkitTransform = '';
+      // force layout to avoid application of transform
+      this.target.offsetWidth;
+      this.target.style.transition = this.target.style.webkitTransition = '';
+    },
+
+    getTransition: function(name) {
+      return this.meta.byId(name || this.transition);
+    },
+
+    getFocusNode: function() {
+      return this.target.querySelector('[autofocus]') || this.target;
+    },
+
+    applyFocus: function() {
+      var focusNode = this.getFocusNode();
+      if (this.opened) {
+        if (!this.autoFocusDisabled) {
+          focusNode.focus();
+        }
+      } else {
+        focusNode.blur();
+        if (currentOverlay() == this) {
+          console.warn('Current core-overlay is attempting to focus itself as next! (bug)');
+        } else {
+          focusOverlay();
+        }
+      }
+    },
+
+    positionTarget: function() {
+      // fire positioning event
+      this.fire('core-overlay-position', {target: this.target,
+          sizingTarget: this.sizingTarget, opened: this.opened});
+      if (!this.dimensions.position.v) {
+        this.target.style.top = '0px';
+      }
+      if (!this.dimensions.position.h) {
+        this.target.style.left = '0px';
+      }
+    },
+
+    updateTargetDimensions: function() {
+      this.sizeTarget();
+      this.repositionTarget();
+    },
+
+    sizeTarget: function() {
+      this.sizingTarget.style.boxSizing = 'border-box';
+      var dims = this.dimensions;
+      var rect = this.target.getBoundingClientRect();
+      if (!dims.size.v) {
+        this.sizeDimension(rect, dims.position.v, 'top', 'bottom', 'Height');
+      }
+      if (!dims.size.h) {
+        this.sizeDimension(rect, dims.position.h, 'left', 'right', 'Width');
+      }
+    },
+
+    sizeDimension: function(rect, positionedBy, start, end, extent) {
+      var dims = this.dimensions;
+      var flip = (positionedBy === end);
+      var m = flip ? start : end;
+      var ws = window['inner' + extent];
+      var o = dims.margin[m] + (flip ? ws - rect[end] : 
+          rect[start]);
+      var offset = 'offset' + extent;
+      var o2 = this.target[offset] - this.sizingTarget[offset];
+      this.sizingTarget.style['max' + extent] = (ws - o - o2) + 'px';
+    },
+
+    // vertically and horizontally center if not positioned
+    repositionTarget: function() {
+      // only center if position fixed.      
+      if (this.dimensions.position.css !== 'fixed') {
+        return; 
+      }
+      if (!this.dimensions.position.v) {
+        var t = (window.innerHeight - this.target.offsetHeight) / 2;
+        t -= this.dimensions.margin.top;
+        this.target.style.top = t + 'px';
+      }
+
+      if (!this.dimensions.position.h) {
+        var l = (window.innerWidth - this.target.offsetWidth) / 2;
+        l -= this.dimensions.margin.left;
+        this.target.style.left = l + 'px';
+      }
+    },
+
+    resetTargetDimensions: function() {
+      if (!this.dimensions.size.v) {
+        this.sizingTarget.style.maxHeight = '';  
+      }
+      if (!this.dimensions.size.h) {
+        this.sizingTarget.style.maxWidth = '';  
+      }
+      this.dimensions = null;
+    },
+
+    tapHandler: function(e) {
+      // closeSelector takes precedence since closeAttribute has a default non-null value.
+      if (e.target &&
+          (this.closeSelector && e.target.matches(this.closeSelector)) ||
+          (this.closeAttribute && e.target.hasAttribute(this.closeAttribute))) {
+        this.toggle();
+      } else {
+        if (this.autoCloseJob) {
+          this.autoCloseJob.stop();
+          this.autoCloseJob = null;
+        }
+      }
+    },
+    
+    // We use the traditional approach of capturing events on document
+    // to to determine if the overlay needs to close. However, due to 
+    // ShadowDOM event retargeting, the event target is not useful. Instead
+    // of using it, we attempt to close asynchronously and prevent the close
+    // if a tap event is immediately heard on the target.
+    // TODO(sorvell): This approach will not work with modal. For
+    // this we need a scrim.
+    captureHandler: function(e) {
+      if (!this.autoCloseDisabled && (currentOverlay() == this)) {
+        this.autoCloseJob = this.job(this.autoCloseJob, function() {
+          this.close();
+        });
+      }
+    },
+
+    keydownHandler: function(e) {
+      if (!this.autoCloseDisabled && (e.keyCode == this.keyHelper.ESCAPE_KEY)) {
+        this.close();
+        e.stopPropagation();
+      }
+    },
+
+    /**
+     * Extensions of core-overlay should implement the `resizeHandler`
+     * method to adjust the size and position of the overlay when the 
+     * browser window resizes.
+     * @method resizeHandler
+     */
+    resizeHandler: function() {
+      this.updateTargetDimensions();
+    },
+
+    // TODO(sorvell): these utility methods should not be here.
+    addElementListenerList: function(node, events) {
+      for (var i in events) {
+        this.addElementListener(node, i, events[i]);
+      }
+    },
+
+    removeElementListenerList: function(node, events) {
+      for (var i in events) {
+        this.removeElementListener(node, i, events[i]);
+      }
+    },
+
+    enableElementListener: function(enable, node, event, methodName, capture) {
+      if (enable) {
+        this.addElementListener(node, event, methodName, capture);
+      } else {
+        this.removeElementListener(node, event, methodName, capture);
+      }
+    },
+
+    addElementListener: function(node, event, methodName, capture) {
+      var fn = this._makeBoundListener(methodName);
+      if (node && fn) {
+        Polymer.addEventListener(node, event, fn, capture);
+      }
+    },
+
+    removeElementListener: function(node, event, methodName, capture) {
+      var fn = this._makeBoundListener(methodName);
+      if (node && fn) {
+        Polymer.removeEventListener(node, event, fn, capture);
+      }
+    },
+
+    _makeBoundListener: function(methodName) {
+      var self = this, method = this[methodName];
+      if (!method) {
+        return;
+      }
+      var bound = '_bound' + methodName;
+      if (!this[bound]) {
+        this[bound] = function(e) {
+          method.call(self, e);
+        };
+      }
+      return this[bound];
+    },
+  });
+
+  // TODO(sorvell): This should be an element with private state so it can
+  // be independent of overlay.
+  // track overlays for z-index and focus managemant
+  var overlays = [];
+  function addOverlay(overlay) {
+    var z0 = currentOverlayZ();
+    overlays.push(overlay);
+    var z1 = currentOverlayZ();
+    if (z1 <= z0) {
+      applyOverlayZ(overlay, z0);
+    }
+  }
+
+  function removeOverlay(overlay) {
+    var i = overlays.indexOf(overlay);
+    if (i >= 0) {
+      overlays.splice(i, 1);
+      setZ(overlay, '');
+    }
+  }
+  
+  function applyOverlayZ(overlay, aboveZ) {
+    setZ(overlay.target, aboveZ + 2);
+  }
+  
+  function setZ(element, z) {
+    element.style.zIndex = z;
+  }
+
+  function currentOverlay() {
+    return overlays[overlays.length-1];
+  }
+  
+  var DEFAULT_Z = 10;
+  
+  function currentOverlayZ() {
+    var z;
+    var current = currentOverlay();
+    if (current) {
+      var z1 = window.getComputedStyle(current.target).zIndex;
+      if (!isNaN(z1)) {
+        z = Number(z1);
+      }
+    }
+    return z || DEFAULT_Z;
+  }
+  
+  function focusOverlay() {
+    var current = currentOverlay();
+    // We have to be careful to focus the next overlay _after_ any current
+    // transitions are complete (due to the state being toggled prior to the
+    // transition). Otherwise, we risk infinite recursion when a transitioning
+    // (closed) overlay becomes the current overlay.
+    //
+    // NOTE: We make the assumption that any overlay that completes a transition
+    // will call into focusOverlay to kick the process back off. Currently:
+    // transitionend -> applyFocus -> focusOverlay.
+    if (current && !current.transitioning) {
+      current.applyFocus();
+    }
+  }
+
+  var backdrops = [];
+  function trackBackdrop(element) {
+    if (element.opened) {
+      backdrops.push(element);
+    } else {
+      var i = backdrops.indexOf(element);
+      if (i >= 0) {
+        backdrops.splice(i, 1);
+      }
+    }
+  }
+
+  function getBackdrops() {
+    return backdrops;
+  }
+})();
+</script>
+</polymer-element>
+<polymer-element name="paper-dialog" attributes="opened heading transition autoCloseDisabled backdrop layered closeSelector" role="dialog" assetpath="bower_components/paper-dialog/">
+
+  <template>
+
+    <style>/*
+ * @license
+ * Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+ * This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+ * The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+ * The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+ * Code distributed by Google as part of the polymer project is also
+ * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+ */
+
+:host {
+  background: white;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+#shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: -1;
+}
+
+#container {
+  overflow: hidden;
+}
+
+#main {
+  height: auto;
+  -webkit-order: 1;
+  -ms-flex-order: 1;
+  order: 1;
+  padding: 24px;
+  overflow: auto;
+}
+
+h1 {
+  margin: 0;
+}
+
+#actions {
+  -webkit-order: 2;
+  -ms-flex-order: 2;
+  order: 2;
+  padding: 4px 16px 20px;
+}
+
+polyfill-next-selector { content: ':host > *'; }
+::content > * {
+  font: inherit;
+}
+</style>
+
+    <div id="shadow">
+      <paper-shadow z="3" hasposition=""></paper-shadow>
+    </div>
+
+    <core-overlay id="overlay" opened="{{opened}}" autoclosedisabled?="{{autoCloseDisabled}}" backdrop?="{{backdrop}}" layered?="{{layered}}" target="{{}}" sizingtarget="{{$.container}}" closeselector="{{closeSelector}}" transition="{{transition}}" margin="20"></core-overlay>
+
+    <div id="container" layout="" vertical="">
+
+      <div id="actions" layout="" horizontal="">
+        <content select="[dismissive]"></content>
+        <div flex="" auto=""></div>
+        <content select="[affirmative]"></content>
+      </div>
+
+      <div id="main" flex="" auto="">
+        <h1>{{heading}}</h1>
+        <content></content>
+      </div>
+
+    </div>
+
+  </template>
+
+  <script>
+
+    Polymer('paper-dialog', {
+
+      /**
+       * Set opened to true to show the dialog and to false to hide it.
+       * A dialog may be made intially opened by setting its opened attribute.
+
+       * @attribute opened
+       * @type boolean
+       * @default false
+       */
+      opened: false,
+
+      /**
+       * If true, the dialog has a backdrop darkening the rest of the screen.
+       * The backdrop element is attached to the document body and may be styled
+       * with the class `core-overlay-backdrop`. When opened the `core-opened`
+       * class is applied.
+       *
+       * @attribute backdrop
+       * @type boolean
+       * @default false
+       */
+      backdrop: false,
+
+      /**
+       * If true, the dialog is guaranteed to display above page content.
+       *
+       * @attribute layered
+       * @type boolean
+       * @default false
+      */
+      layered: false,
+
+      /**
+       * By default a dialog will close automatically if the user
+       * taps outside it or presses the escape key. Disable this
+       * behavior by setting the `autoCloseDisabled` property to true.
+       * @attribute autoCloseDisabled
+       * @type boolean
+       * @default false
+       */
+      autoCloseDisabled: false,
+
+      /**
+       * This property specifies a selector matching elements that should
+       * close the dialog on tap.
+       *
+       * @attribute closeSelector
+       * @type string
+       * @default ""
+       */
+      closeSelector: '[dismissive],[affirmative]',
+
+      /**
+       * @attribute heading
+       * @type string
+       * @default ''
+       */
+      heading: '',
+
+      /**
+       * Set this property to the id of a `core-transition` element to specify
+       * the transition to use when opening/closing this dialog.
+       *
+       * @attribute transition
+       * @type string
+       * @default ''
+       */
+      transition: '',
+
+      /**
+       * Toggle the dialog's opened state.
+       * @method toggle
+       */
+      toggle: function() {
+        this.$.overlay.toggle();
+      },
+
+      headingChanged: function() {
+        this.setAttribute('aria-label', this.heading);
+      }
+
+    });
+
+  </script>
+
+</polymer-element>
+
+<polymer-element name="core-transition-css" extends="core-transition" attributes="transitionType" assetpath="bower_components/core-transition/">
+<template>
+  <style no-shim="">/* Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt */
+
+:host(.core-transition) {
+  outline: none;
+  overflow: auto;
+  opacity: 0;
+  transition: transform 0.2s ease-in-out, opacity 0.2s ease-in;
+  -webkit-transition: -webkit-transform 0.2s ease-in-out, opacity 0.2s ease-in;
+}
+
+
+:host(.core-transition.core-opened) {
+  opacity: 1;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+:host(.core-transition-center) {
+  transform: scale(0.5);
+  -webkit-transform: scale(0.5);
+}
+
+:host(.core-transition-top) {
+  transform: translateY(-200%);
+  -webkit-transform: translateY(-200%);
+}
+
+:host(.core-transition-bottom) {
+  transform: translateY(200%);
+  -webkit-transform: translateY(200%);
+}
+
+:host(.core-transition-left) {
+  transform: translateX(-200%);
+  -webkit-transform: translateX(-200%);
+}
+
+:host(.core-transition-right) {
+  transform: translateX(200%);
+  -webkit-transform: translateX(200%);
+}</style>
+</template>
+<script>
+
+  Polymer('core-transition-css', {
+    
+    /**
+     * The class that will be applied to all animated nodes.
+     *
+     * @attribute baseClass
+     * @type string
+     * @default "core-transition"
+     */
+    baseClass: 'core-transition',
+
+    /**
+     * The class that will be applied to nodes in the opened state.
+     *
+     * @attribute openedClass
+     * @type string
+     * @default "core-opened"
+     */
+    openedClass: 'core-opened',
+
+    /**
+     * The class that will be applied to nodes in the closed state.
+     *
+     * @attribute closedClass
+     * @type string
+     * @default "core-closed"
+     */
+    closedClass: 'core-closed',
+
+    /**
+     * Event to listen to for animation completion.
+     *
+     * @attribute completeEventName
+     * @type string
+     * @default "transitionEnd"
+     */
+    completeEventName: 'transitionend',
+
+    publish: {
+      /**
+       * A secondary configuration attribute for the animation. The class
+       * `<baseClass>-<transitionType` is applied to the animated node during
+       * `setup`.
+       *
+       * @attribute transitionType
+       * @type string
+       */
+      transitionType: null
+    },
+
+    registerCallback: function(element) {
+      this.transitionStyle = element.templateContent().firstElementChild;
+    },
+
+    // template is just for loading styles, we don't need a shadowRoot
+    fetchTemplate: function() {
+      return null;
+    },
+
+    go: function(node, state) {
+      if (state.opened !== undefined) {
+        this.transitionOpened(node, state.opened);
+      }
+    },
+
+    setup: function(node) {
+      if (!node._hasTransitionStyle) {
+        if (!node.shadowRoot) {
+          node.createShadowRoot().innerHTML = '<content></content>';
+        }
+        this.installScopeStyle(this.transitionStyle, 'transition',
+            node.shadowRoot);
+        node._hasTransitionStyle = true;
+      }
+      node.classList.add(this.baseClass);
+      if (this.transitionType) {
+        node.classList.add(this.baseClass + '-' + this.transitionType);
+      }
+    },
+
+    teardown: function(node) {
+      node.classList.remove(this.baseClass);
+      if (this.transitionType) {
+        node.classList.remove(this.baseClass + '-' + this.transitionType);
+      }
+    },
+
+    transitionOpened: function(node, opened) {
+      this.listenOnce(node, this.completeEventName, function() {
+        node.classList.toggle(this.revealedClass, opened);
+        if (!opened) {
+          node.classList.remove(this.closedClass);
+        }
+        this.complete(node);
+      });
+      node.classList.toggle(this.openedClass, opened);
+      node.classList.toggle(this.closedClass, !opened);
+    }
+
+  });
+</script>
+</polymer-element>
+
+<core-transition-css id="core-transition-fade"></core-transition-css>
+<core-transition-css id="core-transition-center" transitiontype="center"></core-transition-css>
+<core-transition-css id="core-transition-top" transitiontype="top"></core-transition-css>
+<core-transition-css id="core-transition-bottom" transitiontype="bottom"></core-transition-css>
+<core-transition-css id="core-transition-left" transitiontype="left"></core-transition-css>
+<core-transition-css id="core-transition-right" transitiontype="right"></core-transition-css>
+<polymer-element name="paper-dialog-transition" extends="core-transition-css" assetpath="bower_components/paper-dialog/">
+
+<template>
+  <style no-shim="">/* Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt */
+
+:host(.paper-dialog-transition) {
+  outline: none;
+  opacity: 0;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-transition: -webkit-transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:host(.paper-dialog-transition.core-opened) {
+  opacity: 1;
+  transform: none;
+  -webkit-transform: none;
+}
+
+:host(.paper-dialog-transition-bottom) {
+  transform: scale(0.9) translateY(200%);
+  -webkit-transform: scale(0.9) translateY(200%);
+}
+
+:host(.paper-dialog-transition-center.core-opened) {
+  animation: paper-dialog-transition-center-keyframes 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-animation: paper-dialog-transition-center-keyframes 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes paper-dialog-transition-center-keyframes {
+  0% {
+    transform: scale(0.5) translateY(0);
+    -webkit-transform: scale(0.5) translateY(0);
+  }
+  90% {
+    transform: scale(1) translateY(-10px);
+    -webkit-transform: scale(1) translateY(-10px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    -webkit-transform: scale(1) translateY(0);
+  }
+}
+
+@-webkit-keyframes paper-dialog-transition-center-keyframes {
+  0% {
+    transform: scale(0.5) translateY(0);
+    -webkit-transform: scale(0.5) translateY(0);
+  }
+  90% {
+    transform: scale(1) translateY(-10px);
+    -webkit-transform: scale(1) translateY(-10px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    -webkit-transform: scale(1) translateY(0);
+  }
+}
+</style>
+</template>
+
+<script>
+  Polymer('paper-dialog-transition',{
+    baseClass: 'paper-dialog-transition'
+  });
+</script>
+
+</polymer-element>
+
+<paper-dialog-transition id="paper-dialog-transition-bottom" transitiontype="bottom"></paper-dialog-transition>
+<paper-dialog-transition id="paper-dialog-transition-center" transitiontype="center"></paper-dialog-transition>
 <polymer-element name="ma-question-option" attributes="option allowToggle" assetpath="components/">
   <template>
     <style>.db-font {
@@ -4238,9 +5411,6 @@ polyfill-next-selector { content: ':host > *:not(.core-selected):not([animate])'
 }
 .medium-font {
   font-family: "core_sans_d_35_regularregular";
-}
-.heavy-font {
-  font-family: "core_sans_d_45_thinregular";
 }
 
 .centered {
@@ -4567,9 +5737,6 @@ a {
 .medium-font {
   font-family: "core_sans_d_35_regularregular";
 }
-.heavy-font {
-  font-family: "core_sans_d_45_thinregular";
-}
 
 .centered {
   text-align: center;
@@ -4660,9 +5827,6 @@ a {
 .medium-font {
   font-family: "core_sans_d_35_regularregular";
 }
-.heavy-font {
-  font-family: "core_sans_d_45_thinregular";
-}
 
 .centered {
   text-align: center;
@@ -4692,6 +5856,8 @@ a {
         width: 100%;
         position: relative;
         background-color: #2392b0;
+        overflow-x: hidden;
+        overflow-y: auto;
       }
       #question {
         padding-top: 20px;
@@ -4827,9 +5993,6 @@ a {
 .medium-font {
   font-family: "core_sans_d_35_regularregular";
 }
-.heavy-font {
-  font-family: "core_sans_d_45_thinregular";
-}
 
 .centered {
   text-align: center;
@@ -4939,9 +6102,6 @@ a {
 .medium-font {
   font-family: "core_sans_d_35_regularregular";
 }
-.heavy-font {
-  font-family: "core_sans_d_45_thinregular";
-}
 
 .centered {
   text-align: center;
@@ -4990,7 +6150,6 @@ a {
         min-height: 50%;
       }
       #footer {
-        height: 50px;
         background-color: white;
       }
       #find-clinic {
@@ -5014,16 +6173,30 @@ a {
         width: 100%;
         overflow: hidden;
       }
-      section > *:first-child {
-        overflow-y: auto;
-        overflow-x: hidden;
-      }
       paper-button {
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
         text-transform: lowercase;
       }
       ma-condition-info {
         margin-bottom: 10px;
+      }
+      #ourStory {
+        max-height: 60%;
+        max-width: 60%;
+      }
+      #ourStory h4 {
+        font-weight: 700em;
+        font-size: 1.1em;
+        color: #134659;
+      }
+      #ourStory h1 {
+        color: #134659;
+      }
+      #ourStory paper-button {
+        color: white;
+        background-color: #134659;
+        width: 100%;
+        margin: 0px;
       }
     </style>
 
@@ -5046,7 +6219,7 @@ a {
         <span class="mb-font">.com</span>
       </div>
       <core-animated-pages id="pages" transitions="slide-from-bottom" layout="" vertical="" center="" center-justified="" flex="" class="mb-font">
-        <section layout="" vertical="" center="" class="pad-sides">
+        <section layout="" vertical="" center="" class="pad-sides scrollable">
           <p class="centered">
              We're here to help you decide what you need to do next to keep yourself healthy.
           </p>
@@ -5185,9 +6358,72 @@ a {
           </section>
         </template>
       </core-animated-pages>
-      <div id="footer" class="mb-font" layout="" horizontal="" center="" center-justified="">
+      <paper-button id="footer" class="mb-font" layout="" horizontal="" center="" center-justified="" on-click="{{toggleOurStory}}">
         Our Story
-      </div>
+      </paper-button>
+      <paper-dialog id="ourStory" heading="Our Story" transition="paper-dialog-transition-bottom" backdrop="{{true}}" class="mb-font" layout="" vertical="">
+        <div flex="">
+          <p>
+            Ihadunsafesex.com was started in 2014. We created this web application because we wanted to provide a way for people, in a time of crisis, to cut through the myriad of confusing, convoluted and contradictory information on the internet about sexually transmitted diseases and pregnancy. We want to provide terrified people with all the information they need to access appropriate health services without judgement or stigma. 
+          </p>
+
+          <h4 class="db-font">
+            Creators
+          </h4>
+          <p>
+            Daniel Brown - 
+            <a href="mailto:db2566@nyu.edu">db2566@nyu.edu</a>
+          </p>
+          <p>
+            Lingliang Zhang -
+            <a href="mailto:lingliang.zhang@nyu.edu">lingliang.zhang@nyu.edu</a>
+          </p>
+
+          <h4 class="db-font">
+            Special Thanks To
+          </h4>
+          <div>
+            Shawn Meindl
+          </div>
+          <div>
+            Naafeh Dhillon
+          </div>
+          <div>
+            Megan Vincent
+          </div>
+
+          <h4 class="db-font">
+            Sources
+          </h4>
+          <p>
+            Our information has been obtained from the following websites
+            </p><div>
+              <a href="http://www.cdc.gov/std/chlamydia/stdfact-chlamydia.htm">
+                Center for Disease Control
+              </a>
+            </div>
+            <div>
+              <a href="http://aids.gov/">
+                AIDS.gov
+              </a>
+            </div>
+            <div>
+              <a href="http://www.avert.org/stis-stds.htm">
+              Avert.org
+              </a>
+            </div>
+          <p></p>
+
+          <h4>
+            Disclaimer
+          </h4>
+          <p>
+            USE AT YOUR OWN RISK: This web site is for informational purposes only. The authors are not medical professionals.  You assume total responsibility and risk for your use of this service. PLEASE BE AWARE THAT ANY INFORMATION YOU MAY FIND IN this website MAY BE INACCURATE. Always consult a physician for medical advice.
+          </p>
+
+          <paper-button on-click="{{toggleOurStory}}">Close</paper-button>
+        </div>
+      </paper-dialog>
     </div>
   </template>
 
@@ -5305,6 +6541,9 @@ a {
         this.$.pages.selected = 0;
         this.started = false;
         this.resetState();
+      },
+      toggleOurStory: function() {
+        this.$.ourStory.toggle();
       }
     });
 
