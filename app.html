@@ -2,8 +2,9 @@
 <link href='bower_components/core-animated-pages/core-animated-pages.html' rel="import">
 <link href='bower_components/core-animated-pages/transitions/slide-from-bottom.html' rel="import">
 <link href='bower_components/paper-button/paper-button.html' rel="import">
-<link href='bower_components/paper-fab/paper-fab.html' rel="import">
 <link href='bower_components/core-icons/core-icons.html' rel="import">
+<link href='bower_components/paper-dialog/paper-dialog.html' rel="import">
+<link href='bower_components/paper-dialog/paper-dialog-transition.html' rel="import">
 <link href='components/ma-question.html' rel="import">
 <link href='components/ma-question-option.html' rel="import">
 <link href='components/ma-condition-info.html' rel="import">
@@ -38,7 +39,6 @@
         min-height: 50%;
       }
       #footer {
-        height: 50px;
         background-color: white;
       }
       #find-clinic {
@@ -62,16 +62,30 @@
         width: 100%;
         overflow: hidden;
       }
-      section > *:first-child {
-        overflow-y: auto;
-        overflow-x: hidden;
-      }
       paper-button {
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
         text-transform: lowercase;
       }
       ma-condition-info {
         margin-bottom: 10px;
+      }
+      #ourStory {
+        max-height: 60%;
+        max-width: 60%;
+      }
+      #ourStory h4 {
+        font-weight: 700em;
+        font-size: 1.1em;
+        color: #134659;
+      }
+      #ourStory h1 {
+        color: #134659;
+      }
+      #ourStory paper-button {
+        color: white;
+        background-color: #134659;
+        width: 100%;
+        margin: 0px;
       }
     </style>
 
@@ -94,7 +108,7 @@
         <span class="mb-font">.com</span>
       </div>
       <core-animated-pages id="pages" transitions="slide-from-bottom" layout vertical center center-justified flex class="mb-font">
-        <section layout vertical center class="pad-sides">
+        <section layout vertical center class="pad-sides scrollable">
           <p class="centered">
              We're here to help you decide what you need to do next to keep yourself healthy.
           </p>
@@ -119,7 +133,7 @@
           </section>
           <template if="{{unprotectedSex == 'No'}}">
             <section layout vertical center>
-              <div flex class="pad-sides">
+              <div flex class="pad-sides" class="scrollable">
                 <h1 class="centered">
                   Good job on using protection.
                 </h1>
@@ -300,9 +314,76 @@
           </section>
         </template>
       </core-animated-pages>
-      <div id="footer" class="mb-font" layout horizontal center center-justified>
+      <paper-button id="footer" class="mb-font" layout horizontal center center-justified on-click={{openOurStory}}>
         Our Story
-      </div>
+      </paper-button>
+      <paper-dialog id="ourStory" heading="Our Story" transition="paper-dialog-transition-bottom"
+        backdrop={{true}}
+        class="mb-font"
+        layout vertical
+      >
+        <div flex>
+          <p>
+            Ihadunsafesex.com was started in 2014. We created this web application because we wanted to provide a way for people, in a time of crisis, to cut through the myriad of confusing, convoluted and contradictory information on the internet about sexually transmitted diseases and pregnancy. We want to provide terrified people with all the information they need to access appropriate health services without judgement or stigma. 
+          </p>
+
+          <h4 class="db-font">
+            Creators
+          </h4>
+          <p>
+            Daniel Brown - 
+            <a href="mailto:db2566@nyu.edu">db2566@nyu.edu</a>
+          </p>
+          <p>
+            Lingliang Zhang -
+            <a href="mailto:lingliang.zhang@nyu.edu">lingliang.zhang@nyu.edu</a>
+          </p>
+
+          <h4 class="db-font">
+            Special Thanks To
+          </h4>
+          <div>
+            Shawn Meindl
+          </div>
+          <div>
+            Naafeh Dhillon
+          </div>
+          <div>
+            Megan Vincent
+          </div>
+
+          <h4 class="db-font">
+            Sources
+          </h4>
+          <p>
+            Our information has been obtained from the following websites
+            <div>
+              <a href="http://www.cdc.gov/std/chlamydia/stdfact-chlamydia.htm">
+                Center for Disease Control
+              </a>
+            </div>
+            <div>
+              <a href="http://aids.gov/">
+                AIDS.gov
+              </a>
+            </div>
+            <div>
+              <a href="http://www.avert.org/stis-stds.htm">
+              Avert.org
+              </a>
+            </div>
+          </p>
+
+          <h4>
+            Disclaimer
+          </h4>
+          <p>
+            USE AT YOUR OWN RISK: This web site is for informational purposes only. The authors are not medical professionals.  You assume total responsibility and risk for your use of this service. PLEASE BE AWARE THAT ANY INFORMATION YOU MAY FIND IN this website MAY BE INACCURATE. Always consult a physician for medical advice.
+          </p>
+
+          <paper-button on-click={{toggleOutStory}}>Close</paper-button>
+        </div>
+      </paper-dialog>
     </div>
   </template>
 
@@ -420,6 +501,9 @@
         this.$.pages.selected = 0;
         this.started = false;
         this.resetState();
+      },
+      openOurStory: function() {
+        this.$.ourStory.toggle();
       }
     });
 
