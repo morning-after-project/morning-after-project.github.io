@@ -202,10 +202,10 @@
                 <div class="pad-sides limit-width">
                   <h1 class="centered">
                     You may be at risk of {{canBePregnant ? "pregnancy and" : ""}} <span class="{{canHaveHIV ? 'all-caps' : ''}}">{{canHaveHIV ? "HIV" : "Gonorrhea"}}</span> as well as other <span class="all-caps">STI</span>s.
-                    Seeking treatment quickly can {{canBePregnant ? "prevent pregnancy," : "" }}
-                    allow rapid recovery{{canHaveHIV ? "," : "."}}
+                    Seeking treatment quickly can {{canBePregnant ? "prevent pregnancy and" : "" }}
+                    allow rapid recovery.
                     <template if="{{canHaveHIV}}">
-                      and prevent permanent <span class='all-caps'>HIV</span> infection.
+                      beginning a course of Post-Exposure Prophylaxis <span class="all-caps">(PEP)</span> within 48 hours may prevent permanent <span class='all-caps'>HIV</span> infection.
                     </template>
                   </h1>
 
@@ -226,11 +226,8 @@
                   </p>
                   <template bind ref="condoms"></template>
                   <h2>
-                    You may be at risk of the following conditions.:
+                    You may be at risk of the following conditions:
                   </h2>
-                  <p>
-                    You can click on each one to learn more about what they are, how they occur and treatment options available to you.
-                  </p>
                   <div layout vertical>
                     <template if={{canBePregnant}}>
                       <ma-condition-info id="hivInfo"
