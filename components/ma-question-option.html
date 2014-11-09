@@ -1,19 +1,37 @@
 <link href='../bower_components/polymer/polymer.html' rel="import">
 
-<polymer-element name="ma-question-option" attributes="option">
+<polymer-element name="ma-question-option" attributes="option allowToggle">
   <template>
+    <link rel="stylesheet" href="../style.css">
     <style>
       paper-button {
-        height: 100px;
-        width: 100px;
-        background: red;
-        border-radius: 50px;
-        border: 10px solid white;
-        text-transform: capitalize;
+        position: relative;
+        height: 120px;
+        width: 120px;
+        background: white;
+        border-radius: 60px;
+        border: 2px solid #70ccdb;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        text-transform: lowercase;
+        -webkit-transition: background-color 0.5s; 
+        -moz-transition: background-color 0.5s; 
+        -ms-transition: background-color 0.5s; 
+        -o-transition: background-color 0.5s; 
+      }
+      paper-button:before {
+        content:"";
+        position: absolute;
+        /*set margins in other words its positioning our added pseudo content*/
+        top:5px;
+        bottom:5px;
+        left:5px;
+        right:5px;
+        border: 1px solid #70ccdb;
+        border-radius: 55px;
       }
       paper-button.active {
-        background-color: white;
+        background-color: #70ccdb;
+        color: white;
       }
     </style>
     <paper-button layout vertical center center-justified
@@ -26,9 +44,12 @@
       ready: function() {
         this.chosen = false;
         this.value = this.option.replace(/^\s+|\s+$/g, "");
+        if (this.allowToggle === undefined) this.allowToggle = true;
       },
       toggle: function() {
-        this.chosen = !this.chosen;
+        if (this.allowToggle) {
+          this.chosen = !this.chosen;
+        }
         this.fire("chosen", {
           chosen: this.chosen,
           value: this.value

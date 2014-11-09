@@ -1,29 +1,34 @@
 <link href='../bower_components/polymer/polymer.html' rel="import">
 <link href='../bower_components/paper-button/paper-button.html' rel="import">
 <link href='./ma-question-option.html' rel="import">
+<link href='./action-bar.html' rel="import">
 
 <polymer-element name="ma-question" attributes="question options chosen mode required">
   <template>
+    <link rel="stylesheet" href="../style.css">
     <style>
       :host {
         height: 100%;
         width: 100%;
         position: relative;
+        background-color: #2392b0;
       }
       #question {
-        padding-top: 30px;
-        padding-bottom: 30px;
+        padding-top: 20px;
+        padding-bottom: 50px;
+        padding-left: 20px;
+        padding-right: 20px;
         height: 80px;
         color: white;
-        background-color: purple;
+        background-color: #134659;
         width: 100%;
       }
       #responses {
         position: relative;
         top: -50px;
       }
-      paper-button {
-        background-color: orange;
+      .options-row {
+        margin-bottom: 10px;
       }
       ma-question-option:not(:last-child) {
         margin-right: 15px;
@@ -31,17 +36,19 @@
     </style>
 
     <div layout vertical center>
-      <div id="question" layout horizontal center-justified>
-        {{question}}
+      <div id="question" layout vertical center-justified class="pad-sides">
+        <div class="centered">
+          {{question}}
+        </div>
         <template if='{{mode == "multiple"}}'>
-          <div>
+          <div class="centered">
             (Pick all that apply)
           </div>
         </template>
       </div>
-      <div id="responses" layout vertical>
+      <div id="responses" layout vertical class="pad-sides">
         <template repeat="{{optionsRow in optionsRows}}">
-          <div layout horizontal center center-justified>
+          <div class="options-row" layout horizontal center center-justified>
             <template repeat="{{option in optionsRow}}">
               <ma-question-option class="response" on-chosen={{handleResponse}} option={{option}}>
               </ma-question-option>
@@ -49,9 +56,8 @@
           </div>
         </template>
       </div>
-      <paper-button disabled='{{completed ? false : true}}' on-click={{next}}>
-        Next
-      </paper-button>
+      <action-bar canGoNext={{canGoNext}} on-next={{next}} on-startOver={{startOver}}>
+      </action-bar>
     </div>
   </template>
   <script>
@@ -63,7 +69,7 @@
         this.mode = this.mode || "single";
         this.required = true;
         this.chosen = (this.mode == "single") ? null : [];
-        this.completed = !this.required;
+        this.canGoNext = !this.required;
 
         this.rebuildOptionsRows();
 
@@ -96,14 +102,11 @@
         }
         if (this.required) {
           if (this.mode == "single") {
-            this.completed = this.chosen != null;
+            this.canGoNext = this.chosen != null;
           } else {
-            this.completed = this.chosen.length > 0;
+            this.canGoNext = this.chosen.length > 0;
           }
         }
-      },
-      next: function() {
-        this.fire("next");
       },
       rebuildOptionsRows: function() {
         // split up the options into rows of 3
@@ -118,6 +121,9 @@
             }
           }
         }
+      },
+      startOver: function() {
+        this.fire("start-over");
       }
     });
   </script>

@@ -1,0 +1,41 @@
+.db-font {
+  color: #134659;
+}
+.mb-font {
+  color: #2392b0;
+}
+.lb-font {
+  color: #70ccdb;
+}
+
+.light-font {
+  font-family: "core_sans_d_15_thinregular";
+}
+.medium-font {
+  font-family: "core_sans_d_35_regularregular";
+}
+.heavy-font {
+  font-family: "core_sans_d_45_thinregular";
+}
+
+.centered {
+  text-align: center;
+}
+
+.pad-sides {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+a {
+  color: inherit;
+}
+
+.scrollable {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.all-caps {
+  text-transform: uppercase;
+}

@@ -1,0 +1,56 @@
+<link href='../bower_components/polymer/polymer.html' rel="import">
+<link href='../bower_components/paper-button/paper-button.html' rel="import">
+<link href='../bower_components/core-collapse/core-collapse.html' rel="import">
+
+<polymer-element name="action-bar" attributes="showNext showStartOver canGoNext fullWidth">
+  <template>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+      :host {
+        width: 100%;
+      }
+      paper-button {
+        background-color: #134659;
+        color: white;
+        width: 200px;
+        text-transform: lowercase;
+      }
+      paper-button.fullWidth {
+        width: 100%;
+        border-radius: 0px;
+        margin: 0px;
+      }
+    </style>
+    <div layout horizontal center-justified>
+      <template if={{showStartOver}}>
+      <paper-button class="{{fullWidth ? 'fullWidth' : ''}}" on-click={{startOver}}>
+          <core-icon icon="refresh"></core-icon>
+          start over
+        </paper-button>
+      </template>
+      <template if={{showNext}}>
+        <paper-button class="{{fullWidth ? 'fullWidth' : ''}}" on-click={{next}} disabled={{!canGoNext}}>
+          next
+          <core-icon icon="arrow-forward"></core-icon>
+        </paper-button>
+      </template>
+    </div>
+
+  </template>
+  <script>
+    Polymer("action-bar", {
+      ready: function() {
+        if (this.showNext === undefined) this.showNext = true;
+        if (this.showStartOver === undefined) this.showStartOver = true;
+        if (this.canGoNext === undefined) this.canGoNext = true;
+        if (this.fullWidth === undefined) this.fullWidth = false;
+      },
+      startOver: function() {
+        this.fire("start-over");
+      },
+      next: function() {
+        this.fire("next");
+      }
+    });
+  </script>
+</polymer-element>

@@ -1,58 +1,428 @@
-<link href='/bower_components/polymer/polymer.html' rel="import">
-<link href="/components/ma-questions.html" rel="import">
+<link href='bower_components/polymer/polymer.html' rel="import">
+<link href='bower_components/core-animated-pages/core-animated-pages.html' rel="import">
+<link href='bower_components/core-animated-pages/transitions/slide-from-bottom.html' rel="import">
+<link href='bower_components/paper-button/paper-button.html' rel="import">
+<link href='bower_components/paper-fab/paper-fab.html' rel="import">
+<link href='bower_components/core-icons/core-icons.html' rel="import">
+<link href='components/ma-question.html' rel="import">
+<link href='components/ma-question-option.html' rel="import">
+<link href='components/ma-condition-info.html' rel="import">
+<link href='components/action-bar.html' rel="import">
+
 
 <polymer-element name="morning-after-app">
   <template>
+    <link rel="stylesheet" href="style.css">
     <style>
       :host {
         height: 100%;
         width: 100%;
+        position: relative;
       }
       #main {
         height: 100%
       }
       #header {
-        background-color: red;
-        height: 30%;
-        -webkit-transition: height 0.5s; 
-        -moz-transition: height 0.5s; 
-        -ms-transition: height 0.5s; 
-        -o-transition: height 0.5s; 
-        transition: height 0.5s;  
+        background-color: white;
+        min-height: 1px;
+        -webkit-transition: min-height 0.5s; 
+        -moz-transition: min-height 0.5s; 
+        -ms-transition: min-height 0.5s; 
+        -o-transition: min-height 0.5s; 
+        transition: min-height 0.5s;  
+        font-size: 8vw;
+        font-weight: 100;
+        cursor: pointer;
       }
       #header.tall {
-        height: 50%;
-      }
-      #content {
-        background-color: blue;
+        min-height: 50%;
       }
       #footer {
-        background-color: green;
+        height: 50px;
+        background-color: white;
+      }
+      #find-clinic {
+        width: 100%;
+      }
+      #find-clinic > paper-button {
+        background-color: #134659;
+        color: white;
+        margin-left: 0px;
+        margin-right: 0px;
+        border-radius: 0px;
+        font-size: 3vw;
+      }
+      #begin {
+        width: 100px;
+        background: #134659;
+        color: white;
+      }
+      core-animated-pages {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+      section > *:first-child {
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      paper-button {
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        text-transform: lowercase;
+      }
+      ma-condition-info {
+        margin-bottom: 10px;
       }
     </style>
 
+    <template id="condoms">
+      <h4>
+        Condoms
+      </h4>
+      <p>
+        The best strategy for safer sex is to always use a condom. Make sure that you use correctly sized condoms as this can reduce the chance of breakage. 
+        They have been proven to be highly effective at both preventing <span class="all-caps">STI</span>s including <span class="all-caps">HIV</span>, as well as unplanned pregnancies.
+      </p>
+    </template>
+
     <div id="main" layout vertical>
-      <div id="header" layout horizontal center center-justified class='{{started ? "" : "tall"}}'>
-        ihadunsafesex.com
+      <div id="header" layout horizontal center center-justified class='{{started ? "" : "tall"}} light-font' on-click={{startOver}}>
+        <span class="mb-font">i</span>
+        <span class="db-font">had</span>
+        <span class="mb-font">unsafe</span>
+        <span class="db-font">sex</span>
+        <span class="mb-font">.com</span>
       </div>
-      <ma-questions id="content" flex layout vertical started={{started}}>
-      </ma-questions>
-      <div id="footer">
-        <span>
-          Our Story
-        </span>
+      <core-animated-pages id="pages" transitions="slide-from-bottom" layout vertical center center-justified flex class="mb-font">
+        <section layout vertical center class="pad-sides">
+          <p class="centered">
+             We're here to help you decide what you need to do next to keep yourself healthy.
+          </p>
+          <p class="centered">
+            100% Confidential
+          </p>
+          <ma-question-option on-chosen={{start}} option="begin" allowToggle={{false}}>
+          </ma-question-option>
+        </section>
+        <template if={{renderQuestions}}>
+          <section layout vertical center>
+            <ma-question
+             question="Have you recently had unprotected sex?"
+             options={{["Yes","No","Unsure"]}}
+             chosen={{unprotectedSex}}
+             mode="single"
+             required={{text}}
+             on-next={{nextSection}}
+             on-start-over={{startOver}}
+            >
+            </ma-question>
+          </section>
+          <template if="{{unprotectedSex == 'No'}}">
+            <section layout vertical center>
+              <div flex class="pad-sides">
+                <h1 class="centered">
+                  Good job on using protection.
+                </h1>
+                <template bind ref="condoms"></template>
+              </div>
+              <action-bar on-start-over={{startOver}} showNext={{false}} fullWidth={{true}}></action-bar>
+            </section>
+          </template>
+          <template if="{{unprotectedSex == 'Unsure' || unprotectedSex == 'Yes'}}">
+            <section layout vertical center>
+              <ma-question
+               question="What is your biological sex?"
+               options={{["Male","Female","Intersex"]}}
+               chosen={{selfSex}}
+               mode="single"
+               required=true
+               on-next={{handleSelfSex}}
+               on-start-over={{startOver}}
+              >
+              </ma-question>
+            </section>
+            <section layout vertical center>
+              <ma-question
+                question="What is the biological sex of your partner(s)?"
+                options={{["Male","Female","Intersex"]}}
+                chosen={{partnersSex}}
+                mode="multiple"
+                required=true
+                on-next={{handlePartnerSex}}
+                on-start-over={{startOver}}
+              >
+              </ma-question>
+            </section>
+            <section layout vertical center>
+              <ma-question
+                id="sexualActs"
+                question="Which of these sexual acts did you engage in?"
+                options={{possibleSexualActs}}
+                chosen={{sexualActs}}
+                mode="multiple"
+                required={{false}}
+                on-next={{handleSexualActs}}
+                on-start-over={{startOver}}
+              >
+              </ma-question>
+              <template bind ref="start-over"></template>
+            </section>
+          </template>
+          <section layout vertical center>
+            <template if='{{sexualActs.length > 0}}'>
+              <a target="_blank" href="http://locator.aids.gov/" id="find-clinic">
+                <paper-button layout horizontal center center-justified>
+                  Find a health clinic near you (US Only)
+                  <core-icon icon="link"></core-icon>
+                </paper-button>
+              </a>
+              <div class="scrollable" flex>
+                <div class="pad-sides">
+                  <h1 class="centered">
+                    You may be at risk of {{canBePregnant ? "pregnancy and" : ""}} <span class="{{canHaveHIV ? 'all-caps' : ''}}">{{canHaveHIV ? "HIV" : "Gonorrhea"}}</span> as well as other <span class="all-caps">STI</span>s.
+                    Seeking treatment quickly can {{canBePregnant ? "prevent pregnancy," : "" }}
+                    allow rapid recovery{{canHaveHIV ? "," : "."}}
+                    <template if="{{canHaveHIV}}">
+                      and prevent permanent <span class='all-caps'>HIV</span> infection.
+                    </template>
+                  </h1>
+
+                  <p>
+                    Here are three things to keep in mind as you consider your next steps.
+                  </p>
+                  <h4>
+                    Don't self diagnose
+                  </h4>
+                  <p>
+                    Self diagnosis is not wise as sexually transmitted diseases can have different symptoms for different people, and similar symptoms to other unrelated health problems. It is much better to get a diagnosis from a trained health professional - they can also help you access treatment. 
+                  </p>
+                  <h4>
+                    Tell your partner
+                  </h4>
+                  <p>
+                    It is important to inform your partners as soon as you test positive for STD so that they can also get tested, get treatment and prevent the spread of the condition. If you would like to do this anonymously, you can used this <a href="http://www.stdcheck.com/anonymous-notification.php">anonymous <span class="all-caps">STI</span> notification app</a>.
+                  </p>
+                  <template bind ref="condoms"></template>
+                  <h2>
+                    You may be at risk of the following conditions.:
+                  </h2>
+                  <p>
+                    You can click on each one to learn more about what they are, how they occur and treatment options available to you.
+                  </p>
+                  <div layout vertical>
+                    <template if={{canBePregnant}}>
+                      <ma-condition-info id="hivInfo"
+                        conditionName="Pregnancy"
+                      >
+                        <p>
+                          Having unprotected vaginal sex can lead to pregnancy. This is true at every point within a woman's menstrual cycle and even when the male partner does not ejaculate.
+                        </p>
+                        <p>
+                          Because of this, women can get pregnant when they are not prepared for the immense responsibility of having a baby. 
+                        </p>
+                        <p>
+                          To prevent pregnancy, even when you have had unprotected sex, you can take the morning-after pill up to 72 hours after intercourse. This pill is found over the counter in some places or you may need a prescription from a doctor.
+                        </p>
+                        <p>
+                          If it has been longer than this, abortion may be an option for you. 
+                        </p>
+                      </ma-condition-info>
+                    </template>
+                    <template if={{canHaveHIV}}>
+                      <ma-condition-info id="hivInfo"
+                        conditionName="HIV"
+                        detail="<span class='all-caps'>HIV</span> if left untreated can cause progressive failure of the immune system allowing life-threatening opportunistic infections and cancers to thrive."
+                        transmission="You can get herpes by having unprotected vaginal or anal sex with someone who has the disease. <span class='all-caps'>HIV</span> affects people of all sexes and sexual orientations. There may have also been cases of <span class='all-caps'>HIV</span> being transmitted through oral sex although this is exceptionally rare."
+                        treatment="Today treatment consists of taking a number of antiretroviral pills every day to suppress the virus and significantly reduces the chance of further transmission - there is currently no way to completely get rid of <span class='all-caps'>HIV</span> from the body." 
+                        uppercase={{true}}
+                      >
+                        <p>
+                          If you think you are at risk of <span class="all-caps">HIV</span>, you can start a Post Exposure Prophylaxis (PEP) course within 48 hours of exposure which will significantly reduce your chances of contracting <span class="all-caps">HIV</span>. 
+                        </p>
+                        <p>
+                          If you frequently engage in risky sexual behavior, consult with a doctor about starting a Pre Exposure Prophylaxis (PREP) prescription. This is a daily pill which will significantly reduce the risk of you contracting <span class="all-caps">HIV</span> in the future. However, this should never be considered a substitute for condoms.
+                        </p>
+                        <p>
+                          <span class="all-caps">HIV</span> can only be reliably detected 3 months after having been infected. In this period you may or may not experience acute retroviral syndrome, which has severe flu like symptoms. Unfortunately it is during the initial period after infection that you are most likely to transmit the virus. Therefore if you think you may be at risk of contracting <span class="all-caps">HIV</span>, consult a doctor immediately.
+                        </p>
+                      </ma-condition-info>
+                    </template>
+                    <ma-condition-info id="chlamydia"
+                      conditionName="Chlamydia"
+                      detail="Chlamydial infections can cause serious reproductive and other health problems - especially for women."
+                      transmission="You can get chlamydia by having unprotected vaginal, anal, or oral sex with someone who has Chlamydia."
+                      treatment="It can be cured with antibiotics prescribed by a doctor and taken correctly."
+                    >
+                    </ma-condition-info>
+                    <ma-condition-info id="gonorrhea"
+                      conditionName="Gonorrhea"
+                      detail="Gonorrhea infections can cause epididymitis, pelvic inflammatory disease and affect joints and heart valves."
+                      transmission="You can get Gonorrhea by having unprotected vaginal, anal, or oral sex with someone who has Gonorrhea. Gonorrhea can also be transmitted through breast milk."
+                      treatment="It can be cured with antibiotics prescribed by a doctor and taken correctly."
+                    >
+                    </ma-condition-info>
+                    <ma-condition-info id="gential-herpes"
+                      conditionName="Genital Herpes"
+                      detail="Genital herpes sores can cause blister on or around the genitals, rectum or mouth."
+                      transmission="You can get herpes by having unprotected vaginal anal, or oral sex with someone who has the disease. You can get herpes from partners with or without obvious symptoms."
+                      treatment="There is no cure for Herpes, however, over time symptoms are increasingly mild and outbreaks are decreasingly frequent."
+                    >
+                    </ma-condition-info>
+                    <ma-condition-info id="syphilis"
+                      conditionName="Syphilis"
+                      detail="Syphilis infections, if left untreated, can cause rashes, chancres and neurological or cardiac symptoms."
+                      transmission="You can get Syphilis by having unprotected vaginal, anal, or oral sex with someone who has Syphilis."
+                      treatment="It can be cured with antibiotics prescribed by a doctor and taken correctly."
+                    >
+                    </ma-condition-info>
+                    <ma-condition-info id="hpv"
+                      conditionName="HPV"
+                      detail="Most infections subclinical and will cause no physical symptoms; however, in some people subclinical infections will become clinical and may cause benign papillomas, such as warts, or cancers of the cervix, vulva, vagina, penis, oropharynx and anus. <span class='all-caps'>HPV</span> can also cause cervical and other cancers."
+                      transmission="You can get <span class='all-caps'>HPV</span> by having unprotected vaginal, anal, or oral sex with someone who has <span class='all-caps'>HPV</span>."
+                      treatment="There is no treatment for <span class='all-caps'>HPV</span> - although there is a vaccine that is safe and effective."
+                      uppercase={{true}}
+                    >
+                    </ma-condition-info>
+                  </div>
+                </div>
+              </div>
+              <action-bar on-start-over={{startOver}} showNext={{false}} fullWidth={{true}}></action-bar>
+            </template>
+            <template if='{{sexualActs.length == 0}}'>
+              <div class="pad-sides">
+                <h1 class="centered">
+                  You are not at risk for <span class="all-caps">STI</span>s
+                </h1>
+                <template bind ref="condoms"></template>
+              </div>
+              <action-bar on-start-over={{startOver}} showNext={{false}} fullWidth={{true}}></action-bar>
+            </template>
+          </section>
+        </template>
+      </core-animated-pages>
+      <div id="footer" class="mb-font" layout horizontal center center-justified>
+        Our Story
       </div>
     </div>
-    </core-header-panel>
   </template>
+
+
+
   <script>
+    // Helpers up here
+    var conditions = ["pregnancy", "hiv", "gonorrhea", "chlamydia", "genital herpes", "syphilis", "hpv"];
+    var hasPenis = function(sexes) {
+      if (sexes instanceof Array) {
+        return sexes.indexOf("Male") > -1 || sexes.indexOf("Intersex") > -1;
+      } else {
+        return sexes == "Male" || sexes == "Intersex";
+      }
+    };
+    var hasVagina = function(sexes) {
+      if (sexes instanceof Array) {
+        return sexes.indexOf("Female") > -1 || sexes.indexOf("Intersex") > -1;
+      } else {
+        return sexes == "Female" || sexes == "Intersex";
+      }
+    }
+
+    // Begin main class
+    var self;
     Polymer("morning-after-app", {
       ready: function() {
-        this.$.content.addEventListener("started", function() {
-          console.log("Started now!");
-        });
+        self = this;
+        this.started = false;
+        this.renderQuestions = true;
+        this.resetState();
+        
+        // make toggle bindings for the more info
+        for (var i = 0; i < conditions.length; i++) {
+          var condition = conditions[i];
+          this["toggle" + condition[0].toUpperCase() + condition.slice(1)] = (function(condition, self) {
+            return function() {
+              var expandNode = self.shadowRoot.querySelector("#" + condition + "Info");
+              expandNode.toggle();
+            }
+          })(condition, this);
+        }
+      },
+      resetState: function() {
+        // renew all flags
+        this.canBePregnant = false;
+        this.canHaveHIV = false;
+
+        // Always possible regardless of gender orientation
+        this.possibleSexualActs = ["Receiving Oral", "Giving Oral"];
+        setTimeout(function() {
+          self.renderQuestions = false;
+        }, 500);
+      },
+      nextSection: function() {
+        setTimeout(function() {
+          self.$.pages.selected += 1;
+        }, 100);
+      },
+      start: function() {
+        this.started = true;
+        this.renderQuestions = true;
+        setTimeout(function() {
+          self.nextSection();
+        }, 0);
+      },
+      handleSelfSex: function() {
+        this.nextSection();
+      },
+      handlePartnerSex: function() {
+
+        if (hasPenis(this.selfSex)) {
+          this.possibleSexualActs.push("Penetrative Partner (Anal)");
+        }
+
+        if (hasPenis(this.selfSex) && hasVagina(this.partnersSex)) {
+          this.possibleSexualActs.push("Penetrative Partner (Vaginal)");
+        }
+
+        if (hasPenis(this.partnersSex)) {
+          this.possibleSexualActs.push("Receiving Partner (Anal)");
+          if (hasVagina(this.selfSex)) {
+            this.possibleSexualActs.push("Receiving Partner (Vaginal)");
+          }
+        }
+
+        // Sort the sexual acts so they always display in order in future
+        this.possibleSexualActs.sort();
+
+        var sexualActsQuestion = this.shadowRoot.querySelector("#sexualActs");
+        sexualActsQuestion.rebuildOptionsRows();
+
+        this.nextSection();
+      },
+      handleSexualActs: function() {
+        for (i = 0; i < this.sexualActs.length; i++) {
+          var sexualAct = this.sexualActs[i];
+          if (sexualAct.indexOf("Anal") > -1 || sexualAct.indexOf("Vaginal") > -1) {
+            this.canHaveHIV = true;
+            break;
+          }
+        }
+
+        for (i = 0; i < this.sexualActs.length; i++) {
+          var sexualAct = this.sexualActs[i];
+          if (sexualAct.indexOf("Receiving Partner (Vaginal)") > -1) {
+            this.canBePregnant = true;
+            break;
+          }
+        }
+
+        this.nextSection();
+      },
+      startOver: function() {
+        this.$.pages.selected = 0;
+        this.started = false;
+        this.resetState();
       }
     });
+
   </script>
 </polymer-element>
 

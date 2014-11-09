@@ -1,34 +1,54 @@
 <link href='../bower_components/polymer/polymer.html' rel="import">
-<link href='../bower_components/paper-item/paper-item.html' rel="import">
+<link href='../bower_components/paper-button/paper-button.html' rel="import">
 <link href='../bower_components/core-collapse/core-collapse.html' rel="import">
 
-<polymer-element name="ma-condition-info" attributes="conditionName detail transmission treatment">
+<polymer-element name="ma-condition-info" attributes="conditionName detail transmission treatment uppercase">
   <template>
+    <link rel="stylesheet" href="../style.css">
     <style>
-      .label {
-        font-weight: 700;
+      :host {
+        color: white;
+      }
+      paper-button {
+        width: 100%;
+        margin-left: 0px;
+        background-color: #134659;
+        text-transform: lowercase;
+      }
+      paper-button.active {
+        background-color: #70ccdb;
+      }
+      paper-button.uppercase {
+        text-transform: uppercase;
+      }
+      #info > div {
+        background-color: #2392b0;
+        padding: 20px;
+      }
+      p {
+        margin-top: 5px;
+        margin-bottom: 5px;
       }
     </style>
-
-    <paper-item on-click={{toggle}}>
+    <paper-button id="condition-name" on-click={{toggle}} class="{{expanded ? 'active' : ''}} {{uppercase ? 'uppercase' : ''}}">
       {{conditionName}}
-    </paper-item>
+    </paper-button>
     <core-collapse id="info">
       <div layout vertical>
         <template if={{detail}}>
-          <div>
+          <p id="detail">
             {{detail}}
-          </div>
+          </p>
         </template>
         <template if={{transmission}}>
-          <div>
-            <div class="label">Transmission</div>
+          <h5>Transmission</h5>
+          <div id="transmission">
             {{transmission}}
-        </div>
+          </div>
         </template>
         <template if={{treatment}}>
-          <div>
-            <div class="label">Treatment</div>
+          <h5 class="label">Treatment</h5>
+          <div id="treatment">
             {{treatment}}
           </div>
         </template>
@@ -38,7 +58,15 @@
   </template>
   <script>
     Polymer("ma-condition-info", {
+      ready: function() {
+        this.expanded = false;
+        if (this.uppercase === undefined) this.uppercase = false;
+        this.$["detail"].innerHTML = this.detail;
+        this.$["transmission"].innerHTML = this.transmission;
+        this.$["treatment"].innerHTML = this.treatment;
+      },
       toggle: function() {
+        this.expanded = !this.expanded;
         var infoNode = this.shadowRoot.querySelector("#info");
         infoNode.toggle();
       }
