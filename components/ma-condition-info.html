@@ -1,6 +1,7 @@
 <link href='../bower_components/polymer/polymer.html' rel="import">
 <link href='../bower_components/paper-button/paper-button.html' rel="import">
 <link href='../bower_components/core-collapse/core-collapse.html' rel="import">
+<link href='../bower_components/core-icons/core-icons.html' rel="import">
 
 <polymer-element name="ma-condition-info" attributes="conditionName detail transmission treatment uppercase">
   <template>
@@ -32,6 +33,12 @@
     </style>
     <paper-button id="condition-name" on-click={{toggle}} class="{{expanded ? 'active' : ''}} {{uppercase ? 'uppercase' : ''}}">
       {{conditionName}}
+      <template if={{expanded}}>
+        <core-icon icon="arrow-drop-up"></core-icon>
+      </template>
+      <template if={{!expanded}}>
+        <core-icon icon="arrow-drop-down"></core-icon>
+      </template>
     </paper-button>
     <core-collapse id="info">
       <div layout vertical>
@@ -61,9 +68,9 @@
       ready: function() {
         this.expanded = false;
         if (this.uppercase === undefined) this.uppercase = false;
-        this.$["detail"].innerHTML = this.detail;
-        this.$["transmission"].innerHTML = this.transmission;
-        this.$["treatment"].innerHTML = this.treatment;
+        if (this.detail) this.$["detail"].innerHTML = this.detail;
+        if (this.transmission) this.$["transmission"].innerHTML = this.transmission;
+        if (this.treatment) this.$["treatment"].innerHTML = this.treatment;
       },
       toggle: function() {
         this.expanded = !this.expanded;

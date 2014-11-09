@@ -55,7 +55,9 @@
         margin-left: 0px;
         margin-right: 0px;
         border-radius: 0px;
-        font-size: 3vw;
+        font-size: 1.5em;
+        width: 100%;
+        text-transform: none;
       }
       #begin {
         width: 100px;
@@ -75,8 +77,8 @@
         margin-bottom: 10px;
       }
       #ourStory {
-        max-height: 60%;
-        max-width: 60%;
+        max-height: 80%;
+        max-width: 500px;
       }
       #ourStory h4 {
         font-weight: 700em;
@@ -91,6 +93,7 @@
         background-color: #134659;
         width: 100%;
         margin: 0px;
+        max-width: 500px;
       }
     </style>
 
@@ -113,7 +116,7 @@
         <span class="mb-font">.com</span>
       </div>
       <core-animated-pages id="pages" transitions="slide-from-bottom" layout vertical center center-justified flex class="mb-font">
-        <section layout vertical center class="pad-sides scrollable">
+        <section layout vertical center class="pad-sides scrollable limit-width">
           <p class="centered">
              We're here to help you decide what you need to do next to keep yourself healthy.
           </p>
@@ -138,7 +141,7 @@
           </section>
           <template if="{{unprotectedSex == 'No'}}">
             <section layout vertical center>
-              <div flex class="pad-sides" class="scrollable">
+              <div flex class="pad-sides scrollable limit-width">
                 <h1 class="centered">
                   Good job on using protection.
                 </h1>
@@ -175,7 +178,7 @@
             <section layout vertical center>
               <ma-question
                 id="sexualActs"
-                question="Which of these sexual acts did you engage in?"
+                question="Which of these sexual acts did you engage in <b>without a condom</b>?"
                 options={{possibleSexualActs}}
                 chosen={{sexualActs}}
                 mode="multiple"
@@ -189,14 +192,14 @@
           </template>
           <section layout vertical center>
             <template if='{{sexualActs.length > 0}}'>
-              <a target="_blank" href="http://locator.aids.gov/" id="find-clinic">
+              <a target="_blank" href="http://locator.aids.gov/" id="find-clinic" layout horizontal center-justified>
                 <paper-button layout horizontal center center-justified>
-                  Find a health clinic near you (US Only)
+                  find a health clinic near you (US only) 
                   <core-icon icon="link"></core-icon>
                 </paper-button>
               </a>
               <div class="scrollable" flex>
-                <div class="pad-sides">
+                <div class="pad-sides limit-width">
                   <h1 class="centered">
                     You may be at risk of {{canBePregnant ? "pregnancy and" : ""}} <span class="{{canHaveHIV ? 'all-caps' : ''}}">{{canHaveHIV ? "HIV" : "Gonorrhea"}}</span> as well as other <span class="all-caps">STI</span>s.
                     Seeking treatment quickly can {{canBePregnant ? "prevent pregnancy," : "" }}
@@ -308,7 +311,7 @@
               <action-bar on-start-over={{startOver}} showNext={{false}} fullWidth={{true}}></action-bar>
             </template>
             <template if='{{sexualActs.length == 0}}'>
-              <div class="pad-sides">
+              <div class="pad-sides limit-width" flex>
                 <h1 class="centered">
                   You are not at risk for <span class="all-caps">STI</span>s
                 </h1>
@@ -386,7 +389,9 @@
             USE AT YOUR OWN RISK: This web site is for informational purposes only. The authors are not medical professionals.  You assume total responsibility and risk for your use of this service. PLEASE BE AWARE THAT ANY INFORMATION YOU MAY FIND IN this website MAY BE INACCURATE. Always consult a physician for medical advice.
           </p>
 
-          <paper-button on-click={{toggleOurStory}}>Close</paper-button>
+          <div layout center-justified horizontal>
+            <paper-button on-click={{toggleOurStory}}>Close</paper-button>
+          </div>
         </div>
       </paper-dialog>
     </div>

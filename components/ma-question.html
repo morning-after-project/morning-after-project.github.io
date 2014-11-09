@@ -33,14 +33,19 @@
         margin-bottom: 10px;
       }
       ma-question-option:not(:last-child) {
-        margin-right: 15px;
+        margin-right: 10px;
+      }
+      @media(min-width: 500px) {
+        ma-question-option:not(:last-child) {
+          margin-right: 15px;
+        }
       }
     </style>
 
     <div layout vertical center>
       <div id="question" layout vertical center-justified class="pad-sides">
-        <div class="centered">
-          {{question}}
+        <div id="questionText" class="centered">
+          {{questionText}}
         </div>
         <template if='{{mode == "multiple"}}'>
           <div class="centered">
@@ -72,6 +77,7 @@
         this.required = true;
         this.chosen = (this.mode == "single") ? null : [];
         this.canGoNext = !this.required;
+        if (this.question) this.$.questionText.innerHTML = this.question;
 
         this.rebuildOptionsRows();
 

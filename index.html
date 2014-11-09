@@ -770,6 +770,8 @@ html /deep/ .core-collapse-closed {
 
 
 
+
+
     <link rel="stylesheet" href="font/core-sans.css">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
@@ -5434,14 +5436,18 @@ a {
 .all-caps {
   text-transform: uppercase;
 }
+
+.limit-width > *{
+  max-width: 700px;
+}
 </style>
     <style>
       paper-button {
         position: relative;
-        height: 120px;
-        width: 120px;
+        height: 110px;
+        width: 110px;
         background: white;
-        border-radius: 60px;
+        border-radius: 55px;
         border: 2px solid #70ccdb;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
         text-transform: lowercase;
@@ -5459,7 +5465,17 @@ a {
         left:5px;
         right:5px;
         border: 1px solid #70ccdb;
-        border-radius: 55px;
+        border-radius: 60px;
+      }
+      @media(min-width: 500px) {
+        paper-button {
+          border-radius: 60px;
+          height: 120px;
+          width: 120px;
+        }
+        paper-button:before {
+          border-radius: 65px;
+        }
       }
       paper-button.active {
         background-color: #70ccdb;
@@ -5759,6 +5775,10 @@ a {
 .all-caps {
   text-transform: uppercase;
 }
+
+.limit-width > *{
+  max-width: 700px;
+}
 </style>
     <style>
       :host {
@@ -5774,6 +5794,7 @@ a {
         width: 100%;
         border-radius: 0px;
         margin: 0px;
+        max-width: 500px;
       }
     </style>
     <div layout="" horizontal="" center-justified="">
@@ -5849,6 +5870,10 @@ a {
 .all-caps {
   text-transform: uppercase;
 }
+
+.limit-width > *{
+  max-width: 700px;
+}
 </style>
     <style>
       :host {
@@ -5877,14 +5902,19 @@ a {
         margin-bottom: 10px;
       }
       ma-question-option:not(:last-child) {
-        margin-right: 15px;
+        margin-right: 10px;
+      }
+      @media(min-width: 500px) {
+        ma-question-option:not(:last-child) {
+          margin-right: 15px;
+        }
       }
     </style>
 
     <div layout="" vertical="" center="">
       <div id="question" layout="" vertical="" center-justified="" class="pad-sides">
-        <div class="centered">
-          {{question}}
+        <div id="questionText" class="centered">
+          {{questionText}}
         </div>
         <template if="{{mode == &quot;multiple&quot;}}">
           <div class="centered">
@@ -5916,6 +5946,7 @@ a {
         this.required = true;
         this.chosen = (this.mode == "single") ? null : [];
         this.canGoNext = !this.required;
+        if (this.question) this.$.questionText.innerHTML = this.question;
 
         this.rebuildOptionsRows();
 
@@ -6015,6 +6046,10 @@ a {
 .all-caps {
   text-transform: uppercase;
 }
+
+.limit-width > *{
+  max-width: 700px;
+}
 </style>
     <style>
       :host {
@@ -6043,6 +6078,12 @@ a {
     </style>
     <paper-button id="condition-name" on-click="{{toggle}}" class="{{expanded ? 'active' : ''}} {{uppercase ? 'uppercase' : ''}}">
       {{conditionName}}
+      <template if="{{expanded}}">
+        <core-icon icon="arrow-drop-up"></core-icon>
+      </template>
+      <template if="{{!expanded}}">
+        <core-icon icon="arrow-drop-down"></core-icon>
+      </template>
     </paper-button>
     <core-collapse id="info">
       <div layout="" vertical="">
@@ -6072,9 +6113,9 @@ a {
       ready: function() {
         this.expanded = false;
         if (this.uppercase === undefined) this.uppercase = false;
-        this.$["detail"].innerHTML = this.detail;
-        this.$["transmission"].innerHTML = this.transmission;
-        this.$["treatment"].innerHTML = this.treatment;
+        if (this.detail) this.$["detail"].innerHTML = this.detail;
+        if (this.transmission) this.$["transmission"].innerHTML = this.transmission;
+        if (this.treatment) this.$["treatment"].innerHTML = this.treatment;
       },
       toggle: function() {
         this.expanded = !this.expanded;
@@ -6124,6 +6165,10 @@ a {
 .all-caps {
   text-transform: uppercase;
 }
+
+.limit-width > *{
+  max-width: 700px;
+}
 </style>
     <style>
       :host {
@@ -6166,7 +6211,9 @@ a {
         margin-left: 0px;
         margin-right: 0px;
         border-radius: 0px;
-        font-size: 3vw;
+        font-size: 1.5em;
+        width: 100%;
+        text-transform: none;
       }
       #begin {
         width: 100px;
@@ -6186,8 +6233,8 @@ a {
         margin-bottom: 10px;
       }
       #ourStory {
-        max-height: 60%;
-        max-width: 60%;
+        max-height: 80%;
+        max-width: 500px;
       }
       #ourStory h4 {
         font-weight: 700em;
@@ -6202,6 +6249,7 @@ a {
         background-color: #134659;
         width: 100%;
         margin: 0px;
+        max-width: 500px;
       }
     </style>
 
@@ -6224,7 +6272,7 @@ a {
         <span class="mb-font">.com</span>
       </div>
       <core-animated-pages id="pages" transitions="slide-from-bottom" layout="" vertical="" center="" center-justified="" flex="" class="mb-font">
-        <section layout="" vertical="" center="" class="pad-sides scrollable">
+        <section layout="" vertical="" center="" class="pad-sides scrollable limit-width">
           <p class="centered">
              We're here to help you decide what you need to do next to keep yourself healthy.
           </p>
@@ -6241,7 +6289,7 @@ a {
           </section>
           <template if="{{unprotectedSex == 'No'}}">
             <section layout="" vertical="" center="">
-              <div flex="" class="pad-sides">
+              <div flex="" class="pad-sides scrollable limit-width">
                 <h1 class="centered">
                   Good job on using protection.
                 </h1>
@@ -6260,21 +6308,21 @@ a {
               </ma-question>
             </section>
             <section layout="" vertical="" center="">
-              <ma-question id="sexualActs" question="Which of these sexual acts did you engage in?" options="{{possibleSexualActs}}" chosen="{{sexualActs}}" mode="multiple" required="{{false}}" on-next="{{handleSexualActs}}" on-start-over="{{startOver}}">
+              <ma-question id="sexualActs" question="Which of these sexual acts did you engage in <b>without a condom</b>?" options="{{possibleSexualActs}}" chosen="{{sexualActs}}" mode="multiple" required="{{false}}" on-next="{{handleSexualActs}}" on-start-over="{{startOver}}">
               </ma-question>
               <template bind="" ref="start-over"></template>
             </section>
           </template>
           <section layout="" vertical="" center="">
             <template if="{{sexualActs.length > 0}}">
-              <a target="_blank" href="http://locator.aids.gov/" id="find-clinic">
+              <a target="_blank" href="http://locator.aids.gov/" id="find-clinic" layout="" horizontal="" center-justified="">
                 <paper-button layout="" horizontal="" center="" center-justified="">
-                  Find a health clinic near you (US Only)
+                  find a health clinic near you (US only) 
                   <core-icon icon="link"></core-icon>
                 </paper-button>
               </a>
               <div class="scrollable" flex="">
-                <div class="pad-sides">
+                <div class="pad-sides limit-width">
                   <h1 class="centered">
                     You may be at risk of {{canBePregnant ? "pregnancy and" : ""}} <span class="{{canHaveHIV ? 'all-caps' : ''}}">{{canHaveHIV ? "HIV" : "Gonorrhea"}}</span> as well as other <span class="all-caps">STI</span>s.
                     Seeking treatment quickly can {{canBePregnant ? "prevent pregnancy," : "" }}
@@ -6352,7 +6400,7 @@ a {
               <action-bar on-start-over="{{startOver}}" shownext="{{false}}" fullwidth="{{true}}"></action-bar>
             </template>
             <template if="{{sexualActs.length == 0}}">
-              <div class="pad-sides">
+              <div class="pad-sides limit-width" flex="">
                 <h1 class="centered">
                   You are not at risk for <span class="all-caps">STI</span>s
                 </h1>
@@ -6426,7 +6474,9 @@ a {
             USE AT YOUR OWN RISK: This web site is for informational purposes only. The authors are not medical professionals.  You assume total responsibility and risk for your use of this service. PLEASE BE AWARE THAT ANY INFORMATION YOU MAY FIND IN this website MAY BE INACCURATE. Always consult a physician for medical advice.
           </p>
 
-          <paper-button on-click="{{toggleOurStory}}">Close</paper-button>
+          <div layout="" center-justified="" horizontal="">
+            <paper-button on-click="{{toggleOurStory}}">Close</paper-button>
+          </div>
         </div>
       </paper-dialog>
     </div>
@@ -6557,6 +6607,16 @@ a {
 
 </div>
     <morning-after-app></morning-after-app>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('set', 'anonymizeIp', true);
+      ga('create', 'UA-56578103-1', 'auto');
+      ga('send', 'pageview');
+    </script>
   
 
 

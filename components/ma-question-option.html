@@ -6,10 +6,10 @@
     <style>
       paper-button {
         position: relative;
-        height: 120px;
-        width: 120px;
+        height: 110px;
+        width: 110px;
         background: white;
-        border-radius: 60px;
+        border-radius: 55px;
         border: 2px solid #70ccdb;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
         text-transform: lowercase;
@@ -27,7 +27,17 @@
         left:5px;
         right:5px;
         border: 1px solid #70ccdb;
-        border-radius: 55px;
+        border-radius: 60px;
+      }
+      @media(min-width: 500px) {
+        paper-button {
+          border-radius: 60px;
+          height: 120px;
+          width: 120px;
+        }
+        paper-button:before {
+          border-radius: 65px;
+        }
       }
       paper-button.active {
         background-color: #70ccdb;
